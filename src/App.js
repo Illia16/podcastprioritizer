@@ -2,54 +2,102 @@ import React, { Component } from "react";
 import axios from "axios";
 import LocationInput from "./LocationsInput";
 import "./App.css";
+import PodcastInput from "./PodcastInput";
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       results: [],
-      modes:['bicycle','pedestrian']
+      modes:['bicycle','pedestrian'],
+      genres: [],
+      travellingTime: [],
     };
   }
 
-  locationData = (e, from, to) => {
-    e.preventDefault();
+  timeChange = (time) => {
+    const arr = time.split(':');
+    const add = parseInt(arr[0]*60) + parseInt(arr[1]) + parseInt(arr[2]/60);
+    
+    return add;
+  }
 
-    const resultsArray = [];
+locationData = (e, from, to) => {
+  e.preventDefault();
 
-    this.state.modes.forEach((mode) => {
-      axios({
-        url: `https://www.mapquestapi.com/directions/v2/route`,
-        method: `GET`,
-        responseType: `json`,
-        params: {
-          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
-          from: from,
-          to: to,
-          routeType: mode,
-        },
-      }).then((res) => {
-        console.log(res.data.route);
-        resultsArray.push(res.data.route);
-      });
+  const timeInMins = [];
+  const resultsArray = [];
+
+  this.state.modes.forEach((mode) => {
+    axios({
+      url: `https://www.mapquestapi.com/directions/v2/route`,
+      method: `GET`,
+      responseType: `json`,
+      params: {
+        key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+        from: from,
+        to: to,
+        routeType: mode,
+      },
+    }).then((res) => {
+      console.log(res.data.route);
+      resultsArray.push(res.data.route);
+
+      const resInMins = this.timeChange(res.data.route.formattedTime);
+      timeInMins.push(resInMins);
+      console.log(timeInMins);
     });
+  });
+
+  // change to async LATER!!!!
+  setTimeout(() => {
     this.setState({
       results: resultsArray,
-    });
-  };
-
+      travellingTime: Math.max(...timeInMins),
+    })
+  }, 800);
   
+};
+
+
+  // componentDidMount() {
+  //       axios({
+  //       url: `https://listen-api.listennotes.com/api/v2/genres`,
+  //       method: `GET`,
+  //       responseType: `json`,
+  //       headers: {
+  //         'X-ListenAPI-Key': `d45d36385df142229be4941f98e07c20`,
+  //       }
+  //     }).then((res) => {
+  //       console.log(res.data.genres);
+
+  //       this.setState({
+  //         genres: res.data.genres,
+  //       });
+  //     });
+  // }
 
   render() {
     
-    
     return (
       <div className="App">
-        
+
         <LocationInput locationData={this.locationData}/>
         
-         
+        <PodcastInput />
+
+        {/* <select type="whichCauldron" id="whichCauldron" name="userSelection">
+          <option value="">Pick one please</option>
+          {
+          this.state.genres.map((oneGenre) => {
+          return ( 
+          <option value={oneGenre.id}>{oneGenre.name}</option>
+            )
+          })
+          }
+        </select> */}
         
+        <button>Click me</button>
       </div>
     );
   }
