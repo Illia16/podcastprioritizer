@@ -8,7 +8,8 @@ class App extends Component {
     super();
     this.state = {
       results: [],
-      modes:['bicycle','pedestrian']
+      modes:['bicycle','pedestrian'],
+      
     };
   }
 
@@ -35,6 +36,10 @@ class App extends Component {
       this.setState({
         results: resultsArray,
       });
+      this.setState({
+        
+        
+      })
     });
   };
 
