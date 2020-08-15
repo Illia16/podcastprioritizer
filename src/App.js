@@ -1,13 +1,55 @@
-import React, { Component } from 'react';
-import LocationInput from './LocationsInput';
-import './App.css';
+import React, { Component } from "react";
+import axios from "axios";
+import LocationInput from "./LocationsInput";
+import "./App.css";
 
 class App extends Component {
-  render(){
+  constructor() {
+    super();
+    this.state = {
+      results: [],
+      modes:['bicycle','pedestrian']
+    };
+  }
+
+  locationData = (e, from, to) => {
+    e.preventDefault();
+
+    const resultsArray = [];
+
+    this.state.modes.forEach((mode) => {
+      axios({
+        url: `https://www.mapquestapi.com/directions/v2/route`,
+        method: `GET`,
+        responseType: `json`,
+        params: {
+          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+          from: from,
+          to: to,
+          routeType: mode,
+        },
+      }).then((res) => {
+        console.log(res.data.route);
+        resultsArray.push(res.data.route);
+      });
+      this.setState({
+        results: resultsArray,
+      });
+    });
+  };
+
+  
+
+  render() {
+    
+    
     return (
       <div className="App">
         
-        <LocationInput />
+        <LocationInput locationData={this.locationData}/>
+        
+         
+        
       </div>
     );
   }
@@ -31,7 +73,6 @@ export default App;
 
 // map results to page, clicking on a podcast will show whether they should walk or bike, under the grid of the results
 
-
 /* Components:
 
 App
@@ -49,4 +90,3 @@ Reset Button
 
 
 */
-

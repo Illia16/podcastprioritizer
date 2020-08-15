@@ -7,8 +7,7 @@ class LocationInput extends Component {
     this.state = {
       userInputFrom: "",
       userInputTo: "",
-      results: [],
-      transportModes: ["bicycle", "pedestrian"],
+    
     };
   }
 
@@ -25,32 +24,6 @@ class LocationInput extends Component {
 
     this.setState({
       userInputTo: e.target.value,
-    });
-  };
-
-  locationData = (e) => {
-    e.preventDefault();
-
-    const resultsArray = [];
-
-    this.state.transportModes.forEach((mode) => {
-      axios({
-        url: `https://www.mapquestapi.com/directions/v2/route`,
-        method: `GET`,
-        responseType: `json`,
-        params: {
-          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
-          from: this.state.userInputFrom,
-          to: this.state.userInputTo,
-          routeType: mode,
-        },
-      }).then((res) => {
-        console.log(res.data.route);
-        resultsArray.push(res.data.route);
-      });
-      this.setState({
-        results: resultsArray,
-      });
     });
   };
 
@@ -77,7 +50,7 @@ class LocationInput extends Component {
               onChange={this.handleToOnChange}
             />
 
-            <button onClick={this.locationData}>Submit</button>
+            <button onClick={(e) => this.props.locationData(e,this.state.userInputFrom,this.state.userInputTo)}>Submit</button>
           </fieldset>
         </form>
       </div>
