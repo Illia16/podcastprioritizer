@@ -32,9 +32,9 @@ class App extends Component {
         console.log(res.data.route);
         resultsArray.push(res.data.route);
       });
-      this.setState({
-        results: resultsArray,
-      });
+    });
+    this.setState({
+      results: resultsArray,
     });
   };
 

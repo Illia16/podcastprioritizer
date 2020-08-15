@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import LocationsInput from "./LocationsInput";
 
 class PodcastInput extends Component {
   constructor() {
@@ -8,8 +7,6 @@ class PodcastInput extends Component {
       podcastInput: "",
     };
   }
-
-  
 
   render() {
     return (
