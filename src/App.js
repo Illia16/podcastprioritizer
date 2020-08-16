@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component }from "react";
 import axios from "axios";
 import LocationInput from "./LocationsInput";
 import "./App.css";
@@ -14,8 +14,10 @@ class App extends Component {
       transitTime: [],
       travellingTime: [],
       podcasts: [],
-      id:{displaySuggestion: false,}
+      displaySuggestion: false,
+      
     };
+    this.inputRef = React.createRef();
   }
 
   timeChange = (time) => {
@@ -88,12 +90,15 @@ class App extends Component {
       });
     });
   };
+  
 
-  displaySuggestion = (e) => {
-    e.preventDefault();
-    this.setState({
-     displaySuggestion: true
-    });
+  displaySuggestion = () => {
+    const ref = this.inputRef
+
+    ref.current.style.display="block"
+    
+
+    
   };
 
   clearResults = () => {
@@ -112,7 +117,12 @@ class App extends Component {
           {this.state.podcasts.map((podcast) => {
             return (
               <li key={podcast.id}>
-                <button onClick={this.displaySuggestion}>
+                <button
+                 
+                  onClick={() => {
+                    this.setState({displaySuggestion:true});
+                  }}
+                >
                   <div className="thumbnailWrapper">
                     <img
                       src={podcast.thumbnail}
@@ -121,8 +131,10 @@ class App extends Component {
                   </div>
                   <p>{podcast.title_original}</p>
                 </button>
-                <div key={podcast.id}
+                <div
                   className="suggestion"
+                  ref={this.inputRef} 
+                  ref={box}
                   style={{
                     display: this.state.displaySuggestion ? "block" : "none",
                   }}
