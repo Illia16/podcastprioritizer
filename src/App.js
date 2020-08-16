@@ -9,105 +9,149 @@ class App extends Component {
     super();
     this.state = {
       results: [],
-      modes:['bicycle','pedestrian'],
+      modes: ["bicycle", "pedestrian"],
       genres: [],
+      transitTime: [],
       travellingTime: [],
-      podcasts: []
+      podcasts: [],
+      id:{displaySuggestion: false,}
     };
   }
 
   timeChange = (time) => {
-    const arr = time.split(':');
-    const add = parseInt(arr[0]*60) + parseInt(arr[1]) + parseInt(arr[2]/60);
-    
+    const arr = time.split(":");
+    const add =
+      parseInt(arr[0] * 60) + parseInt(arr[1]) + parseInt(arr[2] / 60);
+
     return add;
-  }
+  };
 
-locationData = (e, from, to) => {
-  e.preventDefault();
+  locationData = (e, from, to) => {
+    e.preventDefault();
 
-  const timeInMins = [];
-  const resultsArray = [];
+    const resultsArray = [];
+    const timeInMins = [];
 
-  this.state.modes.forEach((mode) => {
-    axios({
-      url: `https://www.mapquestapi.com/directions/v2/route`,
-      method: `GET`,
-      responseType: `json`,
-      params: {
-        key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
-        from: from,
-        to: to,
-        routeType: mode,
-      },
-    }).then((res) => {
-      console.log(res.data.route);
-      resultsArray.push(res.data.route);
-
-      const resInMins = this.timeChange(res.data.route.formattedTime);
-      timeInMins.push(resInMins);
-      console.log(timeInMins);
-    }).catch((er)=> {
-        console.log(er)
-      });
-  });
-
-  // change to async LATER!!!!
-  setTimeout(() => {
-    this.setState({
-      results: resultsArray,
-      travellingTime: Math.max(...timeInMins),
-    })
-  }, 800);
-  
-};
-
-  podcastCall = (e, inputText) => {
-        e.preventDefault();
-
-        axios({
-        url: `https://listen-api.listennotes.com/api/v2/search`,
+    this.state.modes.forEach((mode) => {
+      axios({
+        url: `https://www.mapquestapi.com/directions/v2/route`,
         method: `GET`,
         responseType: `json`,
-        headers: {
-          'X-ListenAPI-Key': `d45d36385df142229be4941f98e07c20`,
-        },
         params: {
-          q: inputText,
-          len_max: this.state.travellingTime
+          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+          from: from,
+          to: to,
+          routeType: mode,
         },
-      }).then((res) => {
-        console.log(res);
-        this.setState({
-          podcasts: res.data.results
+      })
+        .then((res) => {
+          console.log(res.data.route);
+          resultsArray.push(res.data.route);
+
+          const resInMins = this.timeChange(res.data.route.formattedTime);
+          timeInMins.push(resInMins);
+          console.log(timeInMins);
         })
+        .catch((er) => {
+          console.log(er);
+        });
+    });
+
+    // change to async LATER!!!!
+    setTimeout(() => {
+      this.setState({
+        results: resultsArray,
+        transitTime: timeInMins,
+        travellingTime: Math.max(...timeInMins),
       });
-    }
+    }, 800);
+  };
+
+  podcastCall = (e, inputText) => {
+    e.preventDefault();
+
+    axios({
+      url: `https://listen-api.listennotes.com/api/v2/search`,
+      method: `GET`,
+      responseType: `json`,
+      headers: {
+        "X-ListenAPI-Key": `d45d36385df142229be4941f98e07c20`,
+      },
+      params: {
+        q: inputText,
+        len_max: this.state.travellingTime,
+      },
+    }).then((res) => {
+      console.log(res.data.results);
+      this.setState({
+        podcasts: res.data.results,
+      });
+    });
+  };
+
+  displaySuggestion = (e) => {
+    e.preventDefault();
+    this.setState({
+     displaySuggestion: true
+    });
+  };
+
+  clearResults = () => {
+    this.setState({ podcasts: [] });
+    window.scrollTo(0, 0);
+  };
 
   render() {
-    
     return (
       <div className="App">
+        <LocationInput locationData={this.locationData} />
 
-        <LocationInput locationData={this.locationData}/>
-        
-        <PodcastInput inputText={this.podcastCall}/>
+        <PodcastInput inputText={this.podcastCall} />
 
         <ul>
-          {this.state.podcasts.map((podcast)=> {
-            return(
+          {this.state.podcasts.map((podcast) => {
+            return (
               <li key={podcast.id}>
-                <button>
+                <button onClick={this.displaySuggestion}>
                   <div className="thumbnailWrapper">
-                    <img src={podcast.thumbnail} alt={podcast.title_original}></img>
+                    <img
+                      src={podcast.thumbnail}
+                      alt={podcast.title_original}
+                    ></img>
                   </div>
                   <p>{podcast.title_original}</p>
                 </button>
+                <div key={podcast.id}
+                  className="suggestion"
+                  style={{
+                    display: this.state.displaySuggestion ? "block" : "none",
+                  }}
+                >
+                  {Math.round(podcast.audio_length_sec / 60) <= 1 ? (
+                    <p>
+                      podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
+                      minute
+                    </p>
+                  ) : (
+                    <p>
+                      podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
+                      minutes
+                    </p>
+                  )}
+
+                  <p> walk:{Math.max(...this.state.transitTime)} minutes</p>
+                  <p>bike:{Math.min(...this.state.transitTime)} minutes</p>
+                  {podcast.audio_length_sec / 60 > this.state.travellingTime ? (
+                    <p>suggestion: you should walk</p>
+                  ) : (
+                    <p>suggestion: you should bike</p>
+                  )}
+                </div>
               </li>
-            )
+            );
           })}
         </ul>
-
+        <button onClick={this.clearResults}>reset</button>
       </div>
     );
   }
@@ -132,19 +176,10 @@ export default App;
 // map results to page, clicking on a podcast will show whether they should walk or bike, under the grid of the results
 
 /* Components:
-
 App
-
 Location Input: onChange: handleLocation
-
 Podcast Input: onChange:handlepodcast
-
 Podcast Grid
-
 Travel Mode Result
-
 Reset Button
-
-
-
 */
