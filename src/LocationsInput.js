@@ -49,7 +49,7 @@ class LocationInput extends Component {
               onChange={this.handleToOnChange}
             />
 
-            <button onClick={(e) => this.props.locationData(e,this.state.userInputFrom,this.state.userInputTo)}>Submit</button>
+            {/* <button onClick={(e) => this.props.locationData(e, this.state.userInputFrom, this.state.userInputTo)}>Submit</button> */}
           </fieldset>
         </form>
       </div>
