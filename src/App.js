@@ -12,13 +12,14 @@ class App extends Component {
       modes:['bicycle','pedestrian'],
       genres: [],
       travellingTime: [],
+      podcasts: []
     };
   }
 
-  timeChange = (time) => {
+   timeChange = (time) => {
     const arr = time.split(':');
-    const add = parseInt(arr[0]*60) + parseInt(arr[1]) + parseInt(arr[2]/60);
-    
+    const add = parseInt(arr[0] * 60) + parseInt(arr[1]) + parseInt(arr[2] / 60);
+
     return add;
   }
 
@@ -41,41 +42,77 @@ locationData = (e, from, to) => {
       },
     }).then((res) => {
       console.log(res.data.route);
+      async function getResults(result) {
+        let a = await getA(result.data.route);
+        let b = await getB(a.formattedTime)
+        const resInMins = this.timeChange(b);
+        timeInMins.push(resInMins);
+
+        return b
+
+        
+        
+        // console.log(timeInMins);        
+      }
+
+      getResults(res).then(this.setState({
+        results: resultsArray,
+        travellingTime: Math.max(...timeInMins)
+        
+      })
+           
+      
+      )
+      
+      
+
       resultsArray.push(res.data.route);
 
-      const resInMins = this.timeChange(res.data.route.formattedTime);
-      timeInMins.push(resInMins);
-      console.log(timeInMins);
-    });
+      
+
+
+    }).catch((er)=> {
+        console.log(er)
+      });
   });
 
-  // change to async LATER!!!!
-  setTimeout(() => {
-    this.setState({
-      results: resultsArray,
-      travellingTime: Math.max(...timeInMins),
-    })
-  }, 800);
   
-};
+}
 
 
-  componentDidMount() {
+
+  // change to async LATER!!!!
+//   setTimeout(() => {
+//     this.setState({
+//       results: resultsArray,
+//       travellingTime: Math.max(...timeInMins),
+//     })
+//   }, 800);
+  
+// };
+
+
+  podcastCall = (e, inputText) => {
+        e.preventDefault();
+
         axios({
-        url: `https://listen-api.listennotes.com/api/v2/genres`,
+        url: `https://listen-api.listennotes.com/api/v2/search`,
         method: `GET`,
         responseType: `json`,
         headers: {
           'X-ListenAPI-Key': `d45d36385df142229be4941f98e07c20`,
-        }
+        },
+        params: {
+          q: inputText,
+          len_max: this.state.travellingTime
+        },
       }).then((res) => {
-        console.log(res.data.genres);
-
+        console.log(res);
         this.setState({
-          genres: res.data.genres,
-        });
+          podcasts: res.data.results
+        })
       });
-  }
+    }
 
   render() {
     
@@ -84,20 +121,23 @@ locationData = (e, from, to) => {
 
         <LocationInput locationData={this.locationData}/>
         
-        <PodcastInput />
+        <PodcastInput inputText={this.podcastCall}/>
 
-        <select type="whichCauldron" id="whichCauldron" name="userSelection">
-          <option value="">Pick one please</option>
-          {
-          this.state.genres.map((oneGenre) => {
-          return ( 
-          <option value={oneGenre.id}>{oneGenre.name}</option>
+        <ul>
+          {this.state.podcasts.map((podcast)=> {
+            return(
+              <li key={podcast.id}>
+                <button>
+                  <div className="thumbnailWrapper">
+                    <img src={podcast.thumbnail} alt={podcast.title_original}></img>
+                  </div>
+                  <p>{podcast.title_original}</p>
+                </button>
+              </li>
             )
-          })
-          }
-        </select>
-        
-        <button>Click me</button>
+          })}
+        </ul>
+
       </div>
     );
   }

@@ -1,45 +1,28 @@
 import React, { Component } from "react";
-import LocationsInput from "./LocationsInput";
 
 class PodcastInput extends Component {
   constructor() {
     super();
     this.state = {
       podcastInput: "",
+
     };
   }
 
-// componentDidMount() {
-//     podcastCall = () => {
-//         axios({
-//         url: `https://listen-api.listennotes.com/api/v2/search`,
-//         method: `GET`,
-//         responseType: `json`,
-//         headers: {
-//           'X-ListenAPI-Key': `d45d36385df142229be4941f98e07c20`,
-//         },
-//         params: {
-//           q: `star wars`,
-//         },
-//       }).then((res) => {
-//         console.log(res);
-//       });
-//     }
-// }
+    handleChangeText = (e) => {
+        e.preventDefault();
+        this.setState({
+            podcastInput: e.target.value
+        })
+    }
   
-
   render() {
     return (
       <form>
         <label htmlFor="podcastInput"></label>
-        {/* <input type="text" id="podcastInput" value={this.state.PodcastInput}></input> */}
-        
-        {/* <select onChange={ this.whatDoesTheUserWant } type="whichCauldron" id="whichCauldron" name="userSelection">
-          <option value="">PICK ONE PLZ</option>
-          <option value="ministryOfMagic">Ministree of Magic</option>
-          <option value="dumbledoresArmy">Army</option>
-          <option value="orderOfThePhoenix">Order of Phoenix</option>
-        </select> */}
+        <input onChange={this.handleChangeText} type="text" name="podcastInput" id="podcastInput" value={this.state.podcastInput}></input>
+
+        <button onClick={(event) => this.props.inputText(event, this.state.podcastInput)}>Click me</button>
 
       </form>
     );
