@@ -31,8 +31,9 @@ class App extends Component {
 
     const resultsArray = [];
     const timeInMins = [];
+    // const promiseArr = [];
 
-    this.state.modes.forEach((mode) => {
+    this.state.modes.forEach( (mode) => {
       axios({
         url: `https://www.mapquestapi.com/directions/v2/route`,
         method: `GET`,
@@ -54,8 +55,16 @@ class App extends Component {
         })
         .catch((er) => {
           console.log(er);
-        });
+        })
     });
+
+    // Promise.all(promiseArr).then((res) => {
+    //   console.log(res, 'result');
+    // })
+
+    console.log(resultsArray, timeInMins);
+
+    
 
     // change to async LATER!!!!
     setTimeout(() => {
@@ -97,21 +106,26 @@ class App extends Component {
   };
 
   clearResults = () => {
-    this.setState({ podcasts: [] });
+    this.setState({ 
+      podcasts: [],
+    });
+
     window.scrollTo(0, 0);
   };
 
   render() {
     return (
-      <div className="App">
+      <div className="App wrapper">
         <LocationInput locationData={this.locationData} />
 
         <PodcastInput inputText={this.podcastCall} />
 
         <ul>
-          {this.state.podcasts.map((podcast) => {
+          {
+          this.state.podcasts.map((podcast) => {
             return (
               <li key={podcast.id}>
+
                 <button onClick={this.displaySuggestion}>
                   <div className="thumbnailWrapper">
                     <img
@@ -121,6 +135,7 @@ class App extends Component {
                     <p>{podcast.title_original}</p>
                   </div>
                 </button>
+
                 <div
                   key={podcast.id}
                   className="suggestion"
@@ -150,9 +165,15 @@ class App extends Component {
                 </div>
               </li>
             );
-          })}
+          })
+          }
         </ul>
-        <button onClick={this.clearResults}>reset</button>
+        
+        {
+        // Start over the search BUTTON. Only gets visible when there's a list of podcasts on the page.
+          this.state.podcasts.length !== 0 ? <button onClick={this.clearResults}>Start over</button>
+          : null
+        }
       </div>
     );
   }
