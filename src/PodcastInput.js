@@ -30,7 +30,9 @@ class PodcastInput extends Component {
         <button
           onClick={(event) => {
             this.props.inputText(event, this.state.podcastInput);
-            this.setState({ podcastInput: "" });
+            this.setState({ 
+              podcastInput: "",
+            });
           }}
         >
           Click me
