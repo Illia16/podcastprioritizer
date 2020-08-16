@@ -11,10 +11,10 @@ class App extends Component {
       results: [],
       modes: ["bicycle", "pedestrian"],
       genres: [],
-      transitTime :[],
+      transitTime: [],
       travellingTime: [],
       podcasts: [],
-      displaySuggestion:false
+      id:{displaySuggestion: false,}
     };
   }
 
@@ -29,9 +29,8 @@ class App extends Component {
   locationData = (e, from, to) => {
     e.preventDefault();
 
-    
     const resultsArray = [];
-    const timeInMins =[]
+    const timeInMins = [];
 
     this.state.modes.forEach((mode) => {
       axios({
@@ -62,7 +61,7 @@ class App extends Component {
     setTimeout(() => {
       this.setState({
         results: resultsArray,
-        transitTime:timeInMins,
+        transitTime: timeInMins,
         travellingTime: Math.max(...timeInMins),
       });
     }, 800);
@@ -91,11 +90,15 @@ class App extends Component {
   };
 
   displaySuggestion = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     this.setState({
-      displaySuggestion:true
-    })
+     displaySuggestion: true
+    });
+  };
 
+  clearResults = () => {
+    this.setState({ podcasts: [] });
+    window.scrollTo(0, 0);
   };
 
   render() {
@@ -109,9 +112,7 @@ class App extends Component {
           {this.state.podcasts.map((podcast) => {
             return (
               <li key={podcast.id}>
-                {/* change */}
                 <button onClick={this.displaySuggestion}>
-                  {/* end */}
                   <div className="thumbnailWrapper">
                     <img
                       src={podcast.thumbnail}
@@ -120,24 +121,37 @@ class App extends Component {
                   </div>
                   <p>{podcast.title_original}</p>
                 </button>
-                <div className="suggestion" style={{ display: this.state.displaySuggestion ? "block" : "none" }}>
-                  
-                  {Math.round(podcast.audio_length_sec / 60) <= 1 ? <p>podcast length:{ Math.round(podcast.audio_length_sec / 60) } minute</p>:
-                    <p>podcast length:{Math.round(podcast.audio_length_sec / 60)} minutes</p>
+                <div key={podcast.id}
+                  className="suggestion"
+                  style={{
+                    display: this.state.displaySuggestion ? "block" : "none",
+                  }}
+                >
+                  {Math.round(podcast.audio_length_sec / 60) <= 1 ? (
+                    <p>
+                      podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
+                      minute
+                    </p>
+                  ) : (
+                    <p>
+                      podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
+                      minutes
+                    </p>
+                  )}
 
-                    }
-                    
-                  <p> walk:{this.state.travellingTime} minutes</p>
+                  <p> walk:{Math.max(...this.state.transitTime)} minutes</p>
                   <p>bike:{Math.min(...this.state.transitTime)} minutes</p>
-                  {
-                    podcast.audio_length_sec / 60 > this.state.travellingTime? <p>suggestion: you should walk</p>:<p>suggestion: you should bike</p>
-                    
-                  }
+                  {podcast.audio_length_sec / 60 > this.state.travellingTime ? (
+                    <p>suggestion: you should walk</p>
+                  ) : (
+                    <p>suggestion: you should bike</p>
+                  )}
                 </div>
               </li>
             );
           })}
         </ul>
+        <button onClick={this.clearResults}>reset</button>
       </div>
     );
   }

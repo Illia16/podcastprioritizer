@@ -5,25 +5,36 @@ class PodcastInput extends Component {
     super();
     this.state = {
       podcastInput: "",
-
     };
   }
 
-    handleChangeText = (e) => {
-        e.preventDefault();
-        this.setState({
-            podcastInput: e.target.value
-        })
-    }
-  
+  handleChangeText = (e) => {
+    e.preventDefault();
+    this.setState({
+      podcastInput: e.target.value,
+    });
+  };
+
   render() {
     return (
       <form>
         <label htmlFor="podcastInput"></label>
-        <input onChange={this.handleChangeText} type="text" name="podcastInput" id="podcastInput" value={this.state.podcastInput}></input>
+        <input
+          onChange={this.handleChangeText}
+          type="text"
+          name="podcastInput"
+          id="podcastInput"
+          value={this.state.podcastInput}
+        ></input>
 
-        <button onClick={(event) => this.props.inputText(event, this.state.podcastInput)}>Click me</button>
-
+        <button
+          onClick={(event) => {
+            this.props.inputText(event, this.state.podcastInput);
+            this.setState({ podcastInput: "" });
+          }}
+        >
+          Click me
+        </button>
       </form>
     );
   }
