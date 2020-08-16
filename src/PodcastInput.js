@@ -29,6 +29,7 @@ class PodcastInput extends Component {
 
         <button
           onClick={(event) => {
+            this.props.locationData(event, this.state.userInputFrom, this.state.userInputTo)
             this.props.inputText(event, this.state.podcastInput);
             this.setState({ 
               podcastInput: "",

@@ -116,9 +116,9 @@ class App extends Component {
   render() {
     return (
       <div className="App wrapper">
-        <LocationInput locationData={this.locationData} />
+        <LocationInput />
 
-        <PodcastInput inputText={this.podcastCall} />
+        <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
 
         <ul>
           {
@@ -143,25 +143,32 @@ class App extends Component {
                     display: this.state.displaySuggestion ? "block" : "none",
                   }}
                 >
-                  {Math.round(podcast.audio_length_sec / 60) <= 1 ? (
-                    <p>
-                      podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
-                      minute
-                    </p>
-                  ) : (
-                    <p>
-                      podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
-                      minutes
-                    </p>
-                  )}
+                  {
+                    Math.round(podcast.audio_length_sec / 60) <= 1 ? (
+                      <p>
+                        podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
+                        minute
+                      </p>
+                    ) : (
+                      <p>
+                        podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
+                        minutes
+                      </p>
+                    )
+                  }
 
                   <p> walk:{Math.max(...this.state.transitTime)} minutes</p>
                   <p>bike:{Math.min(...this.state.transitTime)} minutes</p>
-                  {podcast.audio_length_sec / 60 > this.state.travellingTime ? (
-                    <p>suggestion: you should walk</p>
-                  ) : (
-                    <p>suggestion: you should bike</p>
-                  )}
+
+                  {
+                    // podcast.audio_length_sec / 60 > this.state.travellingTime ? (
+                    //   <p>suggestion: you should walk</p>
+                    // ) : (
+                    //   <p>suggestion: you should bike</p>
+                    // )
+                    podcast.audio_length_sec / 60 < this.state.transitTime[1] ?
+                    <p>suggestion: you should bike</p> : <p>suggestion: you should walk</p>
+                  }
                 </div>
               </li>
             );
