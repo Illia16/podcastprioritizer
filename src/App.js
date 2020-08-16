@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import LocationInput from "./LocationsInput";
-import "./App.css";
+import "./App.scss";
 import PodcastInput from "./PodcastInput";
 
 class App extends Component {
@@ -14,7 +14,7 @@ class App extends Component {
       transitTime: [],
       travellingTime: [],
       podcasts: [],
-      id:{displaySuggestion: false,}
+      displaySuggestion: false,
     };
   }
 
@@ -92,7 +92,7 @@ class App extends Component {
   displaySuggestion = (e) => {
     e.preventDefault();
     this.setState({
-     displaySuggestion: true
+      displaySuggestion: true,
     });
   };
 
@@ -118,10 +118,11 @@ class App extends Component {
                       src={podcast.thumbnail}
                       alt={podcast.title_original}
                     ></img>
+                    <p>{podcast.title_original}</p>
                   </div>
-                  <p>{podcast.title_original}</p>
                 </button>
-                <div key={podcast.id}
+                <div
+                  key={podcast.id}
                   className="suggestion"
                   style={{
                     display: this.state.displaySuggestion ? "block" : "none",
