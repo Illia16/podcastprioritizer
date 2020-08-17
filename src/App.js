@@ -31,7 +31,7 @@ class App extends Component {
     const timeInMins = {};
     // const promiseArr = [];
 
-    this.state.modes.forEach( (mode) => {
+    this.state.modes.forEach((mode) => {
       axios({
         url: `https://www.mapquestapi.com/directions/v2/route`,
         method: `GET`,
@@ -52,7 +52,7 @@ class App extends Component {
         })
         .catch((er) => {
           console.log(er);
-        })
+        });
     });
 
     // Promise.all(promiseArr).then((res) => {
@@ -60,6 +60,7 @@ class App extends Component {
     // })
 
     console.log(resultsArray, timeInMins);
+
     // change to async LATER!!!!
     setTimeout(() => {
       this.setState({
@@ -92,7 +93,7 @@ class App extends Component {
   };
 
   clearResults = () => {
-    this.setState({ 
+    this.setState({
       podcasts: [],
     });
 
@@ -103,9 +104,13 @@ class App extends Component {
     return (
       <div className="App wrapper">
 
-        <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
+        <PodcastInput
+          inputText={this.podcastCall}
+          locationData={this.locationData}
+        />
 
         <ul>
+
           {
             this.state.podcasts.map((podcast)=> {
               const {id, image, title_original, description_original, audio_length_sec} = podcast
@@ -114,12 +119,14 @@ class App extends Component {
               )
             })
           }
+
         </ul>
-        
+
         {
-        // Start over the search BUTTON. Only gets visible when there's a list of podcasts on the page.
-          this.state.podcasts.length !== 0 ? <button onClick={this.clearResults}>Start over</button>
-          : null
+          // Start over the search BUTTON. Only gets visible when there's a list of podcasts on the page.
+          this.state.podcasts.length !== 0 ? (
+            <button onClick={this.clearResults}>Start over</button>
+          ) : null
         }
       
       </div>
