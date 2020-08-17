@@ -8,7 +8,8 @@ class PodcastInput extends Component {
       podcastInput: "",
       userInputFrom: "",
       userInputTo: "",
-      genres: []
+      genres: [],
+      genreSelected: ""
     };
   }
 
@@ -50,6 +51,27 @@ class PodcastInput extends Component {
     })
   }
 
+  selectChange = (e) => {
+    // getting the name of the selected option
+    console.log(e.target.options[e.target.selectedIndex].text);
+
+    // this.setState({
+    //   podcastInput: "",
+    //   genreSelected: "",
+    // })
+
+    // if (this.state.podcastInput === "") {
+      this.setState({
+        podcastInput: e.target.options[e.target.selectedIndex].text,
+        genreSelected: e.target.value,
+      })
+    // } else {
+    //     this.setState({
+    //       genreSelected: e.target.value,
+    //     })
+    // }
+  }
+
 
   render() {
     return (
@@ -82,12 +104,12 @@ class PodcastInput extends Component {
             value={this.state.podcastInput}
           ></input>
 
-          <select type="genresSelect" id="genreSelect" name="genreSelect">
+          <select type="genresSelect" id="genreSelect" name="genreSelect" onChange={this.selectChange}>
             <option value="">Please select an genre</option>
             {
               this.state.genres.map((genre)=>{
                 return(
-                  <option value={genre.id}>{genre.name}</option>
+                  <option value={genre.id} key={genre.id}>{genre.name}</option>
                 )
               })
             }
@@ -96,12 +118,13 @@ class PodcastInput extends Component {
           <button
             onClick={(event) => {
               // this.props.locationData(event, this.state.userInputFrom, this.state.userInputTo)
-              this.props.inputText(event, this.state.podcastInput);
+              this.props.inputText(event, this.state.podcastInput, this.state.genreSelected);
               this.props.locationData(event, this.state.userInputFrom, this.state.userInputTo)
-              this.setState({ 
+              this.setState({
                 podcastInput: "",
                 userInputFrom: "",
-                userInputTo: ""
+                userInputTo: "",
+                genreSelected: ""
               });
             }}
           >

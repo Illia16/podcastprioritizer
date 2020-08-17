@@ -70,7 +70,7 @@ class App extends Component {
     }, 800);
   };
 
-  podcastCall = (e, inputText) => {
+  podcastCall = (e, inputText, genreSel) => {
     e.preventDefault();
 
     axios({
@@ -83,6 +83,7 @@ class App extends Component {
       params: {
         q: inputText,
         len_max: this.state.transitTime.pedestrian,
+        genre_ids: genreSel,
       },
     }).then((res) => {
       console.log(res.data.results);
@@ -104,13 +105,9 @@ class App extends Component {
     return (
       <div className="App wrapper">
 
-        <PodcastInput
-          inputText={this.podcastCall}
-          locationData={this.locationData}
-        />
+        <PodcastInput inputText={this.podcastCall} locationData={this.locationData}/>
 
         <ul>
-
           {
             this.state.podcasts.map((podcast)=> {
               const {id, image, title_original, description_original, audio_length_sec} = podcast
@@ -119,7 +116,6 @@ class App extends Component {
               )
             })
           }
-
         </ul>
 
         {
