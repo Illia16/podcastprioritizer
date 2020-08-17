@@ -1,0 +1,50 @@
+ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+  grid-gap: 15px;
+  justify-items: center;
+}
+
+// Image button styles
+.podcastButton {
+  border: 2px solid transparent;
+  appearance: none;
+  background: none;
+
+  &:hover,
+  &:focus {
+    border: 2px solid $darkGreen;
+  }
+}
+
+// input styles
+input,
+button {
+  padding: 2px;
+
+  &:focus {
+    outline: none;
+    border: 2px solid $darkGreen;
+  }
+}
+
+// form styles
+fieldset {
+  border: none;
+}
+
+.wrapper ul li {
+  position: relative;
+}
+
+.suggestion {
+  border: 2px solid $darkGreen;
+  padding: 10px;
+  background: white;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
