@@ -1,4 +1,4 @@
-import React, { Component }from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import "./App.scss";
 import PodcastInput from "./PodcastInput";
@@ -13,8 +13,9 @@ class App extends Component {
       genres: [],
       transitTime: {},
       podcasts: [],
+      mapUrl: "",
+      displayTransit: false,
     };
-    this.inputRef = React.createRef();
   }
 
   timeChange = (time) => {
@@ -30,7 +31,27 @@ class App extends Component {
 
     const resultsArray = [];
     const timeInMins = {};
-    // const promiseArr = [];
+
+    if (from !== "" && to !== "") {
+      axios({
+        url: `https://www.mapquestapi.com/staticmap/v5/map`,
+        method: `GET`,
+        responseType: `json`,
+        params: {
+          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+          format: `png`,
+          start: from,
+          end: to,
+          size: `200,200`,
+          countryCode: `CA`,
+          scalebar: true,
+          margin: 40,
+        },
+      }).then((res) => {
+        console.log(res);
+        this.setState({ mapUrl: res.request.responseURL });
+      });
+    }
 
     this.state.modes.forEach((mode) => {
       axios({
@@ -42,13 +63,14 @@ class App extends Component {
           from: from,
           to: to,
           routeType: mode,
+          manMaps: true,
         },
       })
         .then((res) => {
           console.log(res.data.route);
           resultsArray.push(res.data.route);
 
-          timeInMins[mode]= this.timeChange(res.data.route.formattedTime);
+          timeInMins[mode] = this.timeChange(res.data.route.formattedTime);
           console.log(timeInMins);
         })
         .catch((er) => {
@@ -56,20 +78,21 @@ class App extends Component {
         });
     });
 
-    // Promise.all(promiseArr).then((res) => {
-    //   console.log(res, 'result');
-    // })
-
-    
-
     // change to async LATER!!!!
     setTimeout(() => {
       this.setState({
         results: resultsArray,
         transitTime: timeInMins,
+        displayTransit: true,
       });
+      console.log(this.state.transitTime);
     }, 800);
   };
+
+  // make an API call for static map
+
+  // showMap = (e, from, to) => {
+  // e.preventDefault();
 
   podcastCall = (e, inputText, genreSel) => {
     e.preventDefault();
@@ -93,7 +116,6 @@ class App extends Component {
       });
     });
   };
-  
 
   clearResults = () => {
     this.setState({
@@ -106,18 +128,69 @@ class App extends Component {
   render() {
     return (
       <div className="App wrapper">
+        <PodcastInput
+          inputText={this.podcastCall}
+          locationData={this.locationData}
+          displayMap={this.displayMap}
+        />
+        <div className="transitMap">
+          <div className="map">
+            <img src={this.state.mapUrl} />
+          </div>
 
-        <PodcastInput inputText={this.podcastCall} locationData={this.locationData}/>
+          <ul
+            className="transit"
+            style={{
+              display: this.state.displayTransit ? "block" : "none",
+            }}
+          >
+            {
+              // walk time
+              this.state.transitTime.pedestrian <= 1 ? (
+                <li>walk time: {this.state.transitTime.pedestrian} minute</li>
+              ) : (
+                <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
+              )
+              // bike time
+            }
+
+            {
+              this.state.transitTime.bicycle <= 1 ? (
+                <li>bike time: {this.state.transitTime.bicycle} minute</li>
+              ) : (
+                <li>bike time: {this.state.transitTime.bicycle} minutes</li>
+              )
+              // car time
+            }
+
+            {this.state.transitTime.fastest <= 1 ? (
+              <li>car time: {this.state.transitTime.fastest} minute</li>
+            ) : (
+              <li>car time: {this.state.transitTime.fastest} minutes</li>
+            )}
+          </ul>
+        </div>
 
         <ul>
-          {
-            this.state.podcasts.map((podcast)=> {
-              const {id, image, title_original, description_original, audio_length_sec} = podcast
-              return(
-                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} />
-              )
-            })
-          }
+          {this.state.podcasts.map((podcast) => {
+            const {
+              id,
+              image,
+              title_original,
+              description_original,
+              audio_length_sec,
+            } = podcast;
+            return (
+              <PodcastItem
+                key={id}
+                image={image}
+                title={title_original}
+                description={description_original}
+                length={audio_length_sec}
+                transitTime={this.state.transitTime}
+              />
+            );
+          })}
         </ul>
 
         {
@@ -126,7 +199,6 @@ class App extends Component {
             <button onClick={this.clearResults}>Start over</button>
           ) : null
         }
-      
       </div>
     );
   }

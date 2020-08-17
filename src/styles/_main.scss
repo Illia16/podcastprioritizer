@@ -48,3 +48,14 @@ fieldset {
   left: 0;
   right: 0;
 }
+
+.map{
+  width: 250px;
+  height: 250px;
+  img{
+    width: 100%;
+  }
+}
+.transitMap{
+  display: flex;
+}
