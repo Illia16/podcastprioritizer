@@ -33,7 +33,7 @@ class App extends Component {
     const timeInMins = [];
     // const promiseArr = [];
 
-    this.state.modes.forEach( (mode) => {
+    this.state.modes.forEach((mode) => {
       axios({
         url: `https://www.mapquestapi.com/directions/v2/route`,
         method: `GET`,
@@ -55,7 +55,7 @@ class App extends Component {
         })
         .catch((er) => {
           console.log(er);
-        })
+        });
     });
 
     // Promise.all(promiseArr).then((res) => {
@@ -63,8 +63,6 @@ class App extends Component {
     // })
 
     console.log(resultsArray, timeInMins);
-
-    
 
     // change to async LATER!!!!
     setTimeout(() => {
@@ -106,7 +104,7 @@ class App extends Component {
   };
 
   clearResults = () => {
-    this.setState({ 
+    this.setState({
       podcasts: [],
     });
 
@@ -118,15 +116,19 @@ class App extends Component {
       <div className="App wrapper">
         <LocationInput />
 
-        <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
+        <PodcastInput
+          inputText={this.podcastCall}
+          locationData={this.locationData}
+        />
 
         <ul>
-          {
-          this.state.podcasts.map((podcast) => {
+          {this.state.podcasts.map((podcast) => {
             return (
               <li key={podcast.id}>
-
-                <button onClick={this.displaySuggestion}>
+                <button
+                  className="podcastButton"
+                  onClick={this.displaySuggestion}
+                >
                   <div className="thumbnailWrapper">
                     <img
                       src={podcast.thumbnail}
@@ -143,19 +145,17 @@ class App extends Component {
                     display: this.state.displaySuggestion ? "block" : "none",
                   }}
                 >
-                  {
-                    Math.round(podcast.audio_length_sec / 60) <= 1 ? (
-                      <p>
-                        podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
-                        minute
-                      </p>
-                    ) : (
-                      <p>
-                        podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
-                        minutes
-                      </p>
-                    )
-                  }
+                  {Math.round(podcast.audio_length_sec / 60) <= 1 ? (
+                    <p>
+                      podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
+                      minute
+                    </p>
+                  ) : (
+                    <p>
+                      podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
+                      minutes
+                    </p>
+                  )}
 
                   <p> walk:{Math.max(...this.state.transitTime)} minutes</p>
                   <p>bike:{Math.min(...this.state.transitTime)} minutes</p>
@@ -166,20 +166,24 @@ class App extends Component {
                     // ) : (
                     //   <p>suggestion: you should bike</p>
                     // )
-                    podcast.audio_length_sec / 60 < this.state.transitTime[1] ?
-                    <p>suggestion: you should bike</p> : <p>suggestion: you should walk</p>
+                    podcast.audio_length_sec / 60 <
+                    this.state.transitTime[1] ? (
+                      <p>suggestion: you should bike</p>
+                    ) : (
+                      <p>suggestion: you should walk</p>
+                    )
                   }
                 </div>
               </li>
             );
-          })
-          }
+          })}
         </ul>
-        
+
         {
-        // Start over the search BUTTON. Only gets visible when there's a list of podcasts on the page.
-          this.state.podcasts.length !== 0 ? <button onClick={this.clearResults}>Start over</button>
-          : null
+          // Start over the search BUTTON. Only gets visible when there's a list of podcasts on the page.
+          this.state.podcasts.length !== 0 ? (
+            <button onClick={this.clearResults}>Start over</button>
+          ) : null
         }
       </div>
     );
