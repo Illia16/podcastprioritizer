@@ -1,7 +1,7 @@
 import React, { Component }from "react";
 import axios from "axios";
 import LocationInput from "./LocationsInput";
-import "./App.css";
+import "./App.scss";
 import PodcastInput from "./PodcastInput";
 
 class App extends Component {
@@ -15,7 +15,6 @@ class App extends Component {
       travellingTime: [],
       podcasts: [],
       displaySuggestion: false,
-      
     };
     this.inputRef = React.createRef();
   }
@@ -33,8 +32,9 @@ class App extends Component {
 
     const resultsArray = [];
     const timeInMins = [];
+    // const promiseArr = [];
 
-    this.state.modes.forEach((mode) => {
+    this.state.modes.forEach( (mode) => {
       axios({
         url: `https://www.mapquestapi.com/directions/v2/route`,
         method: `GET`,
@@ -56,8 +56,16 @@ class App extends Component {
         })
         .catch((er) => {
           console.log(er);
-        });
+        })
     });
+
+    // Promise.all(promiseArr).then((res) => {
+    //   console.log(res, 'result');
+    // })
+
+    
+
+    
 
     // change to async LATER!!!!
     setTimeout(() => {
@@ -92,49 +100,44 @@ class App extends Component {
   };
   
 
-  displaySuggestion = () => {
-    const ref = this.inputRef
-
-    ref.current.style.display="block"
-    
-
-    
+  displaySuggestion = (e,i) => {
+    e.preventDefault()   
+     
+  
   };
 
   clearResults = () => {
-    this.setState({ podcasts: [] });
+    this.setState({ 
+      podcasts: [],
+    });
+
     window.scrollTo(0, 0);
   };
 
   render() {
     return (
-      <div className="App">
+      <div className="App wrapper">
         <LocationInput locationData={this.locationData} />
 
         <PodcastInput inputText={this.podcastCall} />
 
         <ul>
-          {this.state.podcasts.map((podcast) => {
+          {
+          this.state.podcasts.map((podcast) => {
             return (
               <li key={podcast.id}>
-                <button
-                 
-                  onClick={() => {
-                    this.setState({displaySuggestion:true});
-                  }}
-                >
+                <button onClick={()=>this.displaySuggestion(podcast.id)}>
                   <div className="thumbnailWrapper">
                     <img
                       src={podcast.thumbnail}
                       alt={podcast.title_original}
                     ></img>
+                    <p>{podcast.title_original}</p>
                   </div>
-                  <p>{podcast.title_original}</p>
                 </button>
+
                 <div
                   className="suggestion"
-                  ref={this.inputRef} 
-                  ref={box}
                   style={{
                     display: this.state.displaySuggestion ? "block" : "none",
                   }}
@@ -150,6 +153,9 @@ class App extends Component {
                       minutes
                     </p>
                   )}
+                  
+                   
+                  
 
                   <p> walk:{Math.max(...this.state.transitTime)} minutes</p>
                   <p>bike:{Math.min(...this.state.transitTime)} minutes</p>
@@ -161,9 +167,15 @@ class App extends Component {
                 </div>
               </li>
             );
-          })}
+          })
+          }
         </ul>
-        <button onClick={this.clearResults}>reset</button>
+        
+        {
+        // Start over the search BUTTON. Only gets visible when there's a list of podcasts on the page.
+          this.state.podcasts.length !== 0 ? <button onClick={this.clearResults}>Start over</button>
+          : null
+        }
       </div>
     );
   }
