@@ -1,20 +1,18 @@
 import React, { Component } from "react";
 import axios from "axios";
-import LocationInput from "./LocationsInput";
 import "./App.scss";
 import PodcastInput from "./PodcastInput";
+import PodcastItem from "./PodcastItem";
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       results: [],
-      modes: ["bicycle", "pedestrian"],
+      modes: ["bicycle", "pedestrian", "fastest"],
       genres: [],
-      transitTime: [],
-      travellingTime: [],
+      transitTime: {},
       podcasts: [],
-      displaySuggestion: false,
     };
   }
 
@@ -30,7 +28,7 @@ class App extends Component {
     e.preventDefault();
 
     const resultsArray = [];
-    const timeInMins = [];
+    const timeInMins = {};
     // const promiseArr = [];
 
     this.state.modes.forEach( (mode) => {
@@ -49,8 +47,7 @@ class App extends Component {
           console.log(res.data.route);
           resultsArray.push(res.data.route);
 
-          const resInMins = this.timeChange(res.data.route.formattedTime);
-          timeInMins.push(resInMins);
+          timeInMins[mode]= this.timeChange(res.data.route.formattedTime);
           console.log(timeInMins);
         })
         .catch((er) => {
@@ -63,15 +60,11 @@ class App extends Component {
     // })
 
     console.log(resultsArray, timeInMins);
-
-    
-
     // change to async LATER!!!!
     setTimeout(() => {
       this.setState({
         results: resultsArray,
         transitTime: timeInMins,
-        travellingTime: Math.max(...timeInMins),
       });
     }, 800);
   };
@@ -88,20 +81,13 @@ class App extends Component {
       },
       params: {
         q: inputText,
-        len_max: this.state.travellingTime,
+        len_max: this.state.transitTime.pedestrian,
       },
     }).then((res) => {
       console.log(res.data.results);
       this.setState({
         podcasts: res.data.results,
       });
-    });
-  };
-
-  displaySuggestion = (e) => {
-    e.preventDefault();
-    this.setState({
-      displaySuggestion: true,
     });
   };
 
@@ -116,63 +102,17 @@ class App extends Component {
   render() {
     return (
       <div className="App wrapper">
-        <LocationInput />
 
         <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
 
         <ul>
           {
-          this.state.podcasts.map((podcast) => {
-            return (
-              <li key={podcast.id}>
-
-                <button onClick={this.displaySuggestion}>
-                  <div className="thumbnailWrapper">
-                    <img
-                      src={podcast.thumbnail}
-                      alt={podcast.title_original}
-                    ></img>
-                    <p>{podcast.title_original}</p>
-                  </div>
-                </button>
-
-                <div
-                  key={podcast.id}
-                  className="suggestion"
-                  style={{
-                    display: this.state.displaySuggestion ? "block" : "none",
-                  }}
-                >
-                  {
-                    Math.round(podcast.audio_length_sec / 60) <= 1 ? (
-                      <p>
-                        podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
-                        minute
-                      </p>
-                    ) : (
-                      <p>
-                        podcast length:{Math.round(podcast.audio_length_sec / 60)}{" "}
-                        minutes
-                      </p>
-                    )
-                  }
-
-                  <p> walk:{Math.max(...this.state.transitTime)} minutes</p>
-                  <p>bike:{Math.min(...this.state.transitTime)} minutes</p>
-
-                  {
-                    // podcast.audio_length_sec / 60 > this.state.travellingTime ? (
-                    //   <p>suggestion: you should walk</p>
-                    // ) : (
-                    //   <p>suggestion: you should bike</p>
-                    // )
-                    podcast.audio_length_sec / 60 < this.state.transitTime[1] ?
-                    <p>suggestion: you should bike</p> : <p>suggestion: you should walk</p>
-                  }
-                </div>
-              </li>
-            );
-          })
+            this.state.podcasts.map((podcast)=> {
+              const {id, image, title_original, description_original, audio_length_sec} = podcast
+              return(
+                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} />
+              )
+            })
           }
         </ul>
         
@@ -181,6 +121,7 @@ class App extends Component {
           this.state.podcasts.length !== 0 ? <button onClick={this.clearResults}>Start over</button>
           : null
         }
+      
       </div>
     );
   }
