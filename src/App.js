@@ -3,6 +3,7 @@ import axios from "axios";
 import "./App.scss";
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
+import { dbRef, provider, auth } from "./database";
 
 class App extends Component {
   constructor() {
@@ -13,7 +14,38 @@ class App extends Component {
       genres: [],
       transitTime: {},
       podcasts: [],
+      user: null,
+      userId: "",
     };
+  }
+
+  login = () => {
+    auth.signInWithPopup(provider).then((result) => {
+      const user = result.user;
+      this.setState({
+        user,
+        userId: user.uid,
+      })
+    })
+  }
+
+  logout = () => {
+    auth.signOut().then(() => {
+      this.setState({
+        user: null,
+        userId: "",
+      })
+    })
+  }
+
+  savePodcast = (e, title, image, listenUrl, id) => {
+    e.preventDefault();
+    const podcast = {
+      title: title,
+      image: image,
+      listenUrl: listenUrl,
+    }
+    dbRef.child(`${this.state.userId}/${id}`).set(podcast)
   }
 
   timeChange = (time) => {
@@ -47,7 +79,7 @@ class App extends Component {
           console.log(res.data.route);
           resultsArray.push(res.data.route);
 
-          timeInMins[mode]= this.timeChange(res.data.route.formattedTime);
+          timeInMins[mode] = this.timeChange(res.data.route.formattedTime);
           console.log(timeInMins);
         })
         .catch((er) => {
@@ -105,14 +137,16 @@ class App extends Component {
     return (
       <div className="App wrapper">
 
-        <PodcastInput inputText={this.podcastCall} locationData={this.locationData}/>
+        {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
+
+        <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
 
         <ul>
           {
-            this.state.podcasts.map((podcast)=> {
-              const {id, image, title_original, description_original, audio_length_sec} = podcast
-              return(
-                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} />
+            this.state.podcasts.map((podcast) => {
+              const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
+              return (
+                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} />
               )
             })
           }
@@ -124,7 +158,7 @@ class App extends Component {
             <button onClick={this.clearResults}>Start over</button>
           ) : null
         }
-      
+
       </div>
     );
   }
