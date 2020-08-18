@@ -3,6 +3,7 @@ import axios from "axios";
 import "./App.scss";
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
+import { dbRef, provider, auth } from "./database";
 
 class App extends Component {
   constructor() {
@@ -15,7 +16,38 @@ class App extends Component {
       podcasts: [],
       mapUrl: "",
       displayTransit: false,
+      user: null,
+      userId: "",
     };
+  }
+
+  login = () => {
+    auth.signInWithPopup(provider).then((result) => {
+      const user = result.user;
+      this.setState({
+        user,
+        userId: user.uid,
+      })
+    })
+  }
+
+  logout = () => {
+    auth.signOut().then(() => {
+      this.setState({
+        user: null,
+        userId: "",
+      })
+    })
+  }
+
+  savePodcast = (e, title, image, listenUrl, id) => {
+    e.preventDefault();
+    const podcast = {
+      title: title,
+      image: image,
+      listenUrl: listenUrl,
+    }
+    dbRef.child(`${this.state.userId}/${id}`).set(podcast)
   }
 
   timeChange = (time) => {
@@ -128,11 +160,18 @@ class App extends Component {
   render() {
     return (
       <div className="App wrapper">
-        <PodcastInput
-          inputText={this.podcastCall}
-          locationData={this.locationData}
-          displayMap={this.displayMap}
-        />
+      
+        <header>
+          <h1>Podcast Prioritizer <i class="fas fa-headphones"></i>
+
+          </h1>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis ducimus laudantium quisquam, necessitatibus vel adipisci officiis nesciunt dolorum, distinctio, eaque deleniti sequi! Soluta officia cumque at alias cupiditate nesciunt exercitationem?</p>
+        </header>
+      
+        {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
+      
+        <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
+      
         <div className="transitMap">
           <div className="map">
             <img src={this.state.mapUrl} />
@@ -171,26 +210,15 @@ class App extends Component {
           </ul>
         </div>
 
-        <ul>
-          {this.state.podcasts.map((podcast) => {
-            const {
-              id,
-              image,
-              title_original,
-              description_original,
-              audio_length_sec,
-            } = podcast;
-            return (
-              <PodcastItem
-                key={id}
-                image={image}
-                title={title_original}
-                description={description_original}
-                length={audio_length_sec}
-                transitTime={this.state.transitTime}
-              />
-            );
-          })}
+         <ul>
+          {
+            this.state.podcasts.map((podcast) => {
+              const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
+              return (
+                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} />
+              )
+            })
+          }
         </ul>
 
         {

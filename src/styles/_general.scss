@@ -1,4 +1,27 @@
+h1{
+  font-family: $headerFont;
+  color: $black;
+  font-size: 50px;
+}
+
 body {
   font-family: $bodyFont;
   font-size: 18px;
+  color: $black;
+}
+
+button {
+
+  padding: 5px;
+  margin: 5px;
+  background-color: lightgrey;
+  color: $black; 
+
+  border-radius: 5px;
+  border: none;
+
+  &:hover, &focus{
+    background-color: $lightGreen;
+    border: 2px solid $darkGreen;
+  }
 }
