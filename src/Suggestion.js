@@ -1,42 +1,31 @@
 import React, { Component } from "react";
 
 class Suggestion extends Component {
-
- constructor(props){
-  super(props)
-  this.state={
-   displaySuggestion:false
-  }
- }
-
-
   render() {
+    const { showHideSuggestion, stateSuggestion, propToprop:{length, transitTime} } = this.props;
+
     return (
       <div
-        className="suggestion"
-        
+      onClick={ showHideSuggestion }
+      className="suggestion"
+      style={{ display: stateSuggestion.displaySuggestion ? "block" : "none", }} >
+        {
+            Math.round(length / 60) <= 1 ?
+                <p>podcast length:{Math.round(length / 60)} minute </p> :
+                <p>podcast length:{Math.round(length / 60)} minutes</p>
+        }
 
-        style={{
-          display: this.state.displaySuggestion ? "block" : "none",
-        }}
-      >
-        {Math.round(podcast.audio_length_sec / 60) <= 1 ? (
-          <p>
-            podcast length:{Math.round(podcast.audio_length_sec / 60)} minute
-          </p>
-        ) : (
-          <p>
-            podcast length:{Math.round(podcast.audio_length_sec / 60)} minutes
-          </p>
-        )}
+        <p> walk:{transitTime.pedestrian} minutes</p>
+        <p>bike:{transitTime.bicycle} minutes</p>
+        <p>drive:{transitTime.fastest} minutes</p>
 
-        <p> walk:{Math.max(...this.state.transitTime)} minutes</p>
-        <p>bike:{Math.min(...this.state.transitTime)} minutes</p>
-        {podcast.audio_length_sec / 60 > this.state.travellingTime ? (
-          <p>suggestion: you should walk</p>
-        ) : (
-          <p>suggestion: you should bike</p>
-        )}
+        {
+            length / 60 < transitTime.fastest ?
+                <p>suggestion: you should drive</p> :
+                length / 60 < transitTime.bicycle ?
+                    <p>suggestion: you should bike</p> :
+                    <p>suggestion: you should walk</p>
+        }
       </div>
     );
   }
