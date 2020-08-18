@@ -3,7 +3,8 @@ import axios from "axios";
 import "./App.scss";
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
-import { dbRef, provider, auth } from "./database";
+import PodcastSaved from "./PodcastSaved";
+import firebase from "./database";
 
 class App extends Component {
   constructor() {
@@ -17,11 +18,15 @@ class App extends Component {
       mapUrl: "",
       displayTransit: false,
       user: null,
-      userId: "",
+      userId: "anonymous",
+      podcastList: []
     };
   }
 
   login = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const auth = firebase.auth();
+
     auth.signInWithPopup(provider).then((result) => {
       const user = result.user;
       this.setState({
@@ -32,15 +37,19 @@ class App extends Component {
   }
 
   logout = () => {
+    const auth = firebase.auth();
     auth.signOut().then(() => {
       this.setState({
         user: null,
         userId: "",
+        podcastList: []
       })
     })
   }
 
   savePodcast = (e, title, image, listenUrl, id) => {
+    const dbRef = firebase.database().ref();
+
     e.preventDefault();
     const podcast = {
       title: title,
@@ -48,6 +57,14 @@ class App extends Component {
       listenUrl: listenUrl,
     }
     dbRef.child(`${this.state.userId}/${id}`).set(podcast)
+  }
+
+  deletePodcast = (e, key) => {
+    e.preventDefault();
+    const dbRef = firebase.database().ref(this.state.userId);
+
+    dbRef.child(key).remove();
+
   }
 
   timeChange = (time) => {
@@ -157,17 +174,63 @@ class App extends Component {
     window.scrollTo(0, 0);
   };
 
+  componentDidMount() {
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({
+          user
+        });
+      }
+
+      this.setState({
+        userId: this.state.user.uid
+      })
+
+      const dbRef = firebase.database().ref(this.state.userId);
+
+      dbRef.on('value', (response) => {
+
+        console.log(dbRef);
+        const podArray = [];
+        const data = response.val()
+
+        for (let key in data) {
+          podArray.push({ key: key, podcasts: data[key] })
+        }
+
+        this.setState({
+          podcastList: podArray
+        })
+
+      })
+    })
+  }
+
   render() {
     return (
       <div className="App wrapper">
-      
-        <header>
+
+          <header>
           <h1>Podcast Prioritizer <i class="fas fa-headphones"></i>
 
           </h1>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis ducimus laudantium quisquam, necessitatibus vel adipisci officiis nesciunt dolorum, distinctio, eaque deleniti sequi! Soluta officia cumque at alias cupiditate nesciunt exercitationem?</p>
         </header>
       
+        <ul>
+        {
+          this.state.podcastList.map((podcastItem) => {
+            const {key, podcasts} = podcastItem
+            return (
+              <PodcastSaved key={key} title={podcasts.title} image={podcasts.image} listenURL={podcasts.listenURL} deletePodcast={this.deletePodcast} id={key} />
+            )
+          })
+        }
+        </ul>
+
+
         {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
       
         <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
