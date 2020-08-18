@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 
+import Error from "./Error";
+
 class PodcastInput extends Component {
   constructor() {
     super();
@@ -10,32 +12,19 @@ class PodcastInput extends Component {
       userInputTo: "",
       genres: [],
       genreSelected: "",
+      popUpError: false,
     };
   }
 
+  // function that listens to OUR TEXT INPUTS AND SETS a value to the appropriate input
   handleChangeText = (e) => {
     e.preventDefault();
     this.setState({
-      podcastInput: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
-  handleFromOnChange = (e) => {
-    e.preventDefault();
-
-    this.setState({
-      userInputFrom: e.target.value,
-    });
-  };
-
-  handleToOnChange = (e) => {
-    e.preventDefault();
-
-    this.setState({
-      userInputTo: e.target.value,
-    });
-  };
-
+  // filling drop-down selection with podcast genres
   componentDidMount() {
     axios({
       url: `https://listen-api.listennotes.com/api/v2/genres`,
@@ -72,6 +61,7 @@ class PodcastInput extends Component {
     // }
   };
 
+
   render() {
     return (
       <div>
@@ -82,7 +72,7 @@ class PodcastInput extends Component {
             name="userInputFrom"
             id="userInputFrom"
             value={this.state.userInputFrom}
-            onChange={this.handleFromOnChange}
+            onChange={this.handleChangeText}
           />
 
           <label htmlFor="userInputTo">To</label>
@@ -91,7 +81,7 @@ class PodcastInput extends Component {
             name="userInputTo"
             id="userInputTo"
             value={this.state.userInputTo}
-            onChange={this.handleToOnChange}
+            onChange={this.handleChangeText}
           />
           
 
@@ -120,26 +110,34 @@ class PodcastInput extends Component {
             })}
           </select>
 
+          {
+            this.state.popUpError ? <Error /> : null
+          }
+          
           <button
-            onClick={(event) => {
-              // this.props.locationData(event, this.state.userInputFrom, this.state.userInputTo)
-              this.props.inputText(
-                event,
-                this.state.podcastInput,
-                this.state.genreSelected
-              );
-              this.props.locationData(
-                event,
-                this.state.userInputFrom,
-                this.state.userInputTo
-              );
-              this.setState({
-                podcastInput: "",
-                userInputFrom: "",
-                userInputTo: "",
-                genreSelected: "",
-              });
-            }}
+            onClick={ (event) => {
+              event.preventDefault();
+
+              if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo) {
+                console.log('Error')
+
+                this.setState({
+                  popUpError: true,
+                })
+
+              } else {
+                this.props.inputText(event, this.state.podcastInput, this.state.genreSelected);
+                this.props.locationData(event, this.state.userInputFrom, this.state.userInputTo);
+                this.setState({
+                  podcastInput: "",
+                  userInputFrom: "",
+                  userInputTo: "",
+                  genreSelected: "",
+                  popUpError: false,
+                })
+              }
+            }
+          }
           >
             Click me
           </button>
