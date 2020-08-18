@@ -15,6 +15,8 @@ class App extends Component {
       genres: [],
       transitTime: {},
       podcasts: [],
+      mapUrl: "",
+      displayTransit: false,
       user: null,
       userId: "anonymous",
       podcastList: []
@@ -78,7 +80,27 @@ class App extends Component {
 
     const resultsArray = [];
     const timeInMins = {};
-    // const promiseArr = [];
+
+    if (from !== "" && to !== "") {
+      axios({
+        url: `https://www.mapquestapi.com/staticmap/v5/map`,
+        method: `GET`,
+        responseType: `json`,
+        params: {
+          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+          format: `png`,
+          start: from,
+          end: to,
+          size: `200,200`,
+          countryCode: `CA`,
+          scalebar: true,
+          margin: 40,
+        },
+      }).then((res) => {
+        console.log(res);
+        this.setState({ mapUrl: res.request.responseURL });
+      });
+    }
 
     this.state.modes.forEach((mode) => {
       axios({
@@ -90,6 +112,7 @@ class App extends Component {
           from: from,
           to: to,
           routeType: mode,
+          manMaps: true,
         },
       })
         .then((res) => {
@@ -104,20 +127,21 @@ class App extends Component {
         });
     });
 
-    // Promise.all(promiseArr).then((res) => {
-    //   console.log(res, 'result');
-    // })
-
-    console.log(resultsArray, timeInMins);
-
     // change to async LATER!!!!
     setTimeout(() => {
       this.setState({
         results: resultsArray,
         transitTime: timeInMins,
+        displayTransit: true,
       });
+      console.log(this.state.transitTime);
     }, 800);
   };
+
+  // make an API call for static map
+
+  // showMap = (e, from, to) => {
+  // e.preventDefault();
 
   podcastCall = (e, inputText, genreSel) => {
     e.preventDefault();
@@ -187,7 +211,14 @@ class App extends Component {
   render() {
     return (
       <div className="App wrapper">
-        
+
+          <header>
+          <h1>Podcast Prioritizer <i class="fas fa-headphones"></i>
+
+          </h1>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis ducimus laudantium quisquam, necessitatibus vel adipisci officiis nesciunt dolorum, distinctio, eaque deleniti sequi! Soluta officia cumque at alias cupiditate nesciunt exercitationem?</p>
+        </header>
+      
         <ul>
         {
           this.state.podcastList.map((podcastItem) => {
@@ -199,11 +230,50 @@ class App extends Component {
         }
         </ul>
 
+
         {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
-
+      
         <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
+      
+        <div className="transitMap">
+          <div className="map">
+            <img src={this.state.mapUrl} />
+          </div>
 
-        <ul>
+          <ul
+            className="transit"
+            style={{
+              display: this.state.displayTransit ? "block" : "none",
+            }}
+          >
+            {
+              // walk time
+              this.state.transitTime.pedestrian <= 1 ? (
+                <li>walk time: {this.state.transitTime.pedestrian} minute</li>
+              ) : (
+                <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
+              )
+              // bike time
+            }
+
+            {
+              this.state.transitTime.bicycle <= 1 ? (
+                <li>bike time: {this.state.transitTime.bicycle} minute</li>
+              ) : (
+                <li>bike time: {this.state.transitTime.bicycle} minutes</li>
+              )
+              // car time
+            }
+
+            {this.state.transitTime.fastest <= 1 ? (
+              <li>car time: {this.state.transitTime.fastest} minute</li>
+            ) : (
+              <li>car time: {this.state.transitTime.fastest} minutes</li>
+            )}
+          </ul>
+        </div>
+
+         <ul>
           {
             this.state.podcasts.map((podcast) => {
               const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
@@ -220,7 +290,6 @@ class App extends Component {
             <button onClick={this.clearResults}>Start over</button>
           ) : null
         }
-
       </div>
     );
   }
