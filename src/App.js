@@ -136,7 +136,12 @@ class App extends Component {
   render() {
     return (
       <div className="App wrapper">
+        <header>
+          <h1>Podcast Prioritizer <i class="fas fa-headphones"></i>
 
+          </h1>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis ducimus laudantium quisquam, necessitatibus vel adipisci officiis nesciunt dolorum, distinctio, eaque deleniti sequi! Soluta officia cumque at alias cupiditate nesciunt exercitationem?</p>
+        </header>
         {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
 
         <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
