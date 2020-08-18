@@ -3,7 +3,7 @@ import axios from "axios";
 import "./App.scss";
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
-import PodcastSaved from "./PodcastSaved";
+import PodcastMenu from './PodcastMenu';
 import firebase from "./database";
 
 class App extends Component {
@@ -17,7 +17,8 @@ class App extends Component {
       mapUrl: "",
       user: null,
       userId: "anonymous",
-      podcastList: []
+      podcastList: [],
+      menuOpen: false
     };
   }
 
@@ -48,7 +49,7 @@ class App extends Component {
   }
 
   // Save podcast to user list when button is clicked
-  savePodcast = (e, title, image, listenUrl, id) => {
+  savePodcast = (e, title, image, audio, id) => {
     const dbRef = firebase.database().ref();
 
     // Prevent default
@@ -58,7 +59,7 @@ class App extends Component {
     const podcast = {
       title: title,
       image: image,
-      listenUrl: listenUrl,
+      audio: audio,
     }
 
     // Go to the user's ID and the podcast ID and set the above object
@@ -77,6 +78,12 @@ class App extends Component {
     // Remove the podcast based on its ID
     dbRef.child(key).remove();
 
+  }
+
+  podcastMenu = () => {
+    this.setState({
+      menuOpen: !this.state.menuOpen
+    })
   }
 
    // function to modify time from 00:00:00 format to minutes
@@ -107,7 +114,6 @@ class App extends Component {
           margin: 40,
         },
       }).then((res) => {
-        console.log(res);
         this.setState({ mapUrl: res.request.responseURL });
       });
     
@@ -157,7 +163,6 @@ class App extends Component {
         genre_ids: genreSel,
       },
     }).then((res) => {
-      console.log(res.data.results);
       this.setState({
         podcasts: res.data.results,
       });
@@ -195,8 +200,6 @@ class App extends Component {
 
       // On load/change grab the user's saved list of podcasts and save to state
       dbRef.on('value', (response) => {
-
-        console.log(dbRef);
         const podArray = [];
         const data = response.val()
 
@@ -222,21 +225,12 @@ class App extends Component {
           <p>Can't decide which podcast to listen to on your next journey? Not sure whether you should walk, bike or drive? Use this web app by inputting your 'To', 'From', and a 'Podcast type' to determine which podcast you should listen to, and how you should get there.</p>
         </header>
       
-        {/* SAVED PODCAST BY CERTAIN USER */}
-        <ul>
-        {
-          this.state.podcastList.map((podcastItem) => {
-            const {key, podcasts} = podcastItem
-            return (
-              <PodcastSaved key={key} title={podcasts.title} image={podcasts.image} listenURL={podcasts.listenURL} deletePodcast={this.deletePodcast} id={key} />
-            )
-          })
-        }
-        </ul>
+        {/* MENU TO OPEN/CLOSE PODCAST LIST AND LOGIN BUTTON */}
+        <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars"></i></button>
 
-        {/* Log In/ Log Out button */}
-        {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
-        
+        {/* LOGIN AND PODCAST LIST MENU */}
+        {this.state.menuOpen ? <PodcastMenu key="podcastMenu" user={this.state.user} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} /> : null}
+
         {/* FORM INPUT */}
         <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} />
         
@@ -250,9 +244,8 @@ class App extends Component {
             className="transit"
             style={{
               display: this.state.transitTime.bicycle && this.state.transitTime.fastest && this.state.transitTime.pedestrian ? "block" : "none",
-            }}
-           >
-             
+            }}>
+            
             {
               // walk time
               this.state.transitTime.pedestrian <= 1 ? (
@@ -281,12 +274,12 @@ class App extends Component {
         </div>
 
         {/* LIST OF PODCASTS FROM THE SEARCH */}
-         <ul>
+        <ul>
           {
             this.state.podcasts.map((podcast) => {
-              const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
+              const { id, image, title_original, description_original, audio_length_sec, audio } = podcast
               return (
-                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} />
+                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} audio={audio} id={id} />
               )
             })
           }

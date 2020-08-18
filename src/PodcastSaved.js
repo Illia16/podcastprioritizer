@@ -1,15 +1,20 @@
 import React from 'react';
 
 const PodcastSaved = (props) => {
-   const { title, listenURL, image, id, deletePodcast} = props
+   const { title, audio, image, id, deletePodcast} = props
         return(
             <li className="podcastItem">
-                <p>{title}</p>
-                <div className="podcastImageWrapper">
-                    <img src={image} alt={title}></img>
+                <div className="podcastNameImage">
+                    <div className="podcastImageWrapper">
+                        <img src={image} alt={title}></img>
+                    </div>
+                    <div className="podcastNameDelete">
+                        <p>{title}</p>
+                        <button onClick={(e) => { deletePodcast(e, id) }}>X</button>
+                    </div>
                 </div>
-                <a href={listenURL}></a>
-                <button onClick={(e) => {deletePodcast(e, id)}}>Delete</button>
+
+                <audio controls src={audio}>Your browser does not support the audio element.</audio>
             </li>
         )
     
