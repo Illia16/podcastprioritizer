@@ -210,14 +210,12 @@ class App extends Component {
     return (
       <div className="App wrapper">
 
-          <header>
-          <h1>Podcast Prioritizer <i class="fas fa-headphones"></i>
-
-          </h1>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis ducimus laudantium quisquam, necessitatibus vel adipisci officiis nesciunt dolorum, distinctio, eaque deleniti sequi! Soluta officia cumque at alias cupiditate nesciunt exercitationem?</p>
+        <header>
+          <h1>Podcast Prioritizer <i className="fas fa-headphones"></i></h1>
+          <p>Can't decide which podcast to listen to on your next journey? Not sure whether you should walk, bike or drive? Use this web app by inputting your 'To', 'From', and a 'Podcast type' to determine which podcast you should listen to, and how you should get there.</p>
         </header>
       
-        {/* LIST WITH RESULTS */}
+        {/* SAVED PODCAST BY CERTAIN USER */}
         <ul>
         {
           this.state.podcastList.map((podcastItem) => {
@@ -273,6 +271,7 @@ class App extends Component {
           </ul>
         </div>
 
+        {/* LIST WITH RESULTS */}
          <ul>
           {
             this.state.podcasts.map((podcast) => {
