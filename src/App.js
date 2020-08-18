@@ -114,7 +114,7 @@ class App extends Component {
           from: from,
           to: to,
           routeType: mode,
-          manMaps: true,
+         
         },
       })
         .then((res) => {
@@ -138,6 +138,7 @@ class App extends Component {
       });
       console.log(this.state.transitTime);
     }, 800);
+    
   };
 
   // making an API call for PODCAST
