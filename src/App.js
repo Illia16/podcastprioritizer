@@ -16,6 +16,7 @@ class App extends Component {
     };
   }
 
+  // function to modify time from 00:00:00 format to minutes
   timeChange = (time) => {
     const arr = time.split(":");
     const add =
@@ -24,6 +25,7 @@ class App extends Component {
     return add;
   };
 
+  // making an API call for ROUTE
   locationData = (e, from, to) => {
     e.preventDefault();
 
@@ -70,6 +72,7 @@ class App extends Component {
     }, 800);
   };
 
+  // making an API call for PODCAST
   podcastCall = (e, inputText, genreSel) => {
     e.preventDefault();
 
@@ -105,8 +108,11 @@ class App extends Component {
     return (
       <div className="App wrapper">
 
+        {/* FORM INPUT */}
         <PodcastInput inputText={this.podcastCall} locationData={this.locationData}/>
 
+
+        {/* LIST WITH RESULTS */}
         <ul>
           {
             this.state.podcasts.map((podcast)=> {
@@ -119,7 +125,7 @@ class App extends Component {
         </ul>
 
         {
-          // Start over the search BUTTON. Only gets visible when there's a list of podcasts on the page.
+          // START OVER BUTTON. Only gets visible when there's a list of podcasts on the page.
           this.state.podcasts.length !== 0 ? (
             <button onClick={this.clearResults}>Start over</button>
           ) : null
