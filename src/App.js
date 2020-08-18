@@ -3,6 +3,8 @@ import axios from "axios";
 import "./App.scss";
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
+import PodcastSaved from "./PodcastSaved";
+import firebase from "./database";
 
 class App extends Component {
   constructor() {
@@ -13,10 +15,59 @@ class App extends Component {
       genres: [],
       transitTime: {},
       podcasts: [],
+      mapUrl: "",
+      displayTransit: false,
+      user: null,
+      userId: "anonymous",
+      podcastList: []
     };
   }
 
-  // function to modify time from 00:00:00 format to minutes
+  login = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const auth = firebase.auth();
+
+    auth.signInWithPopup(provider).then((result) => {
+      const user = result.user;
+      this.setState({
+        user,
+        userId: user.uid,
+      })
+    })
+  }
+
+  logout = () => {
+    const auth = firebase.auth();
+    auth.signOut().then(() => {
+      this.setState({
+        user: null,
+        userId: "",
+        podcastList: []
+      })
+    })
+  }
+
+  savePodcast = (e, title, image, listenUrl, id) => {
+    const dbRef = firebase.database().ref();
+
+    e.preventDefault();
+    const podcast = {
+      title: title,
+      image: image,
+      listenUrl: listenUrl,
+    }
+    dbRef.child(`${this.state.userId}/${id}`).set(podcast)
+  }
+  
+  deletePodcast = (e, key) => {
+    e.preventDefault();
+    const dbRef = firebase.database().ref(this.state.userId);
+
+    dbRef.child(key).remove();
+
+  }
+
+   // function to modify time from 00:00:00 format to minutes
   timeChange = (time) => {
     const arr = time.split(":");
     const add =
@@ -31,7 +82,27 @@ class App extends Component {
 
     const resultsArray = [];
     const timeInMins = {};
-    // const promiseArr = [];
+
+    if (from !== "" && to !== "") {
+      axios({
+        url: `https://www.mapquestapi.com/staticmap/v5/map`,
+        method: `GET`,
+        responseType: `json`,
+        params: {
+          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+          format: `png`,
+          start: from,
+          end: to,
+          size: `200,200`,
+          countryCode: `CA`,
+          scalebar: true,
+          margin: 40,
+        },
+      }).then((res) => {
+        console.log(res);
+        this.setState({ mapUrl: res.request.responseURL });
+      });
+    }
 
     this.state.modes.forEach((mode) => {
       axios({
@@ -43,13 +114,14 @@ class App extends Component {
           from: from,
           to: to,
           routeType: mode,
+          manMaps: true,
         },
       })
         .then((res) => {
           console.log(res.data.route);
           resultsArray.push(res.data.route);
 
-          timeInMins[mode]= this.timeChange(res.data.route.formattedTime);
+          timeInMins[mode] = this.timeChange(res.data.route.formattedTime);
           console.log(timeInMins);
         })
         .catch((er) => {
@@ -57,18 +129,14 @@ class App extends Component {
         });
     });
 
-    // Promise.all(promiseArr).then((res) => {
-    //   console.log(res, 'result');
-    // })
-
-    console.log(resultsArray, timeInMins);
-
     // change to async LATER!!!!
     setTimeout(() => {
       this.setState({
         results: resultsArray,
         transitTime: timeInMins,
+        displayTransit: true,
       });
+      console.log(this.state.transitTime);
     }, 800);
   };
 
@@ -104,21 +172,113 @@ class App extends Component {
     window.scrollTo(0, 0);
   };
 
+  componentDidMount() {
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({
+          user
+        });
+      }
+
+      this.setState({
+        userId: this.state.user.uid
+      })
+
+      const dbRef = firebase.database().ref(this.state.userId);
+
+      dbRef.on('value', (response) => {
+
+        console.log(dbRef);
+        const podArray = [];
+        const data = response.val()
+
+        for (let key in data) {
+          podArray.push({ key: key, podcasts: data[key] })
+        }
+
+        this.setState({
+          podcastList: podArray
+        })
+
+      })
+    })
+  }
+
   render() {
     return (
       <div className="App wrapper">
 
-        {/* FORM INPUT */}
-        <PodcastInput inputText={this.podcastCall} locationData={this.locationData}/>
+          <header>
+          <h1>Podcast Prioritizer <i class="fas fa-headphones"></i>
 
-
+          </h1>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis ducimus laudantium quisquam, necessitatibus vel adipisci officiis nesciunt dolorum, distinctio, eaque deleniti sequi! Soluta officia cumque at alias cupiditate nesciunt exercitationem?</p>
+        </header>
+      
         {/* LIST WITH RESULTS */}
         <ul>
+        {
+          this.state.podcastList.map((podcastItem) => {
+            const {key, podcasts} = podcastItem
+            return (
+              <PodcastSaved key={key} title={podcasts.title} image={podcasts.image} listenURL={podcasts.listenURL} deletePodcast={this.deletePodcast} id={key} />
+            )
+          })
+        }
+        </ul>
+
+
+        {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
+        
+        {/* FORM INPUT */}
+        <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
+      
+        <div className="transitMap">
+          <div className="map">
+            <img src={this.state.mapUrl} />
+          </div>
+
+          <ul
+            className="transit"
+            style={{
+              display: this.state.displayTransit ? "block" : "none",
+            }}
+          >
+            {
+              // walk time
+              this.state.transitTime.pedestrian <= 1 ? (
+                <li>walk time: {this.state.transitTime.pedestrian} minute</li>
+              ) : (
+                <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
+              )
+              // bike time
+            }
+
+            {
+              this.state.transitTime.bicycle <= 1 ? (
+                <li>bike time: {this.state.transitTime.bicycle} minute</li>
+              ) : (
+                <li>bike time: {this.state.transitTime.bicycle} minutes</li>
+              )
+              // car time
+            }
+
+            {this.state.transitTime.fastest <= 1 ? (
+              <li>car time: {this.state.transitTime.fastest} minute</li>
+            ) : (
+              <li>car time: {this.state.transitTime.fastest} minutes</li>
+            )}
+          </ul>
+        </div>
+
+         <ul>
           {
-            this.state.podcasts.map((podcast)=> {
-              const {id, image, title_original, description_original, audio_length_sec} = podcast
-              return(
-                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} />
+            this.state.podcasts.map((podcast) => {
+              const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
+              return (
+                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} />
               )
             })
           }
@@ -130,7 +290,6 @@ class App extends Component {
             <button onClick={this.clearResults}>Start over</button>
           ) : null
         }
-      
       </div>
     );
   }

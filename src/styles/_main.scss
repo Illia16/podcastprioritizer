@@ -1,3 +1,8 @@
+// header styles 
+.fas{
+  color: $darkGreen;
+}
+
 ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
@@ -47,4 +52,15 @@ fieldset {
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.map{
+  width: 250px;
+  height: 250px;
+  img{
+    width: 100%;
+  }
+}
+.transitMap{
+  display: flex;
 }

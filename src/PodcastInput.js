@@ -32,12 +32,12 @@ class PodcastInput extends Component {
       responseType: `json`,
       headers: {
         "X-ListenAPI-Key": `d45d36385df142229be4941f98e07c20`,
-      }
-    }).then((res)=>{
+      },
+    }).then((res) => {
       this.setState({
-        genres: res.data.genres
-      })
-    })
+        genres: res.data.genres,
+      });
+    });
   }
 
   selectChange = (e) => {
@@ -50,16 +50,17 @@ class PodcastInput extends Component {
     // })
 
     // if (this.state.podcastInput === "") {
-      this.setState({
-        podcastInput: e.target.options[e.target.selectedIndex].text,
-        genreSelected: e.target.value,
-      })
+    this.setState({
+      podcastInput: e.target.options[e.target.selectedIndex].text,
+      genreSelected: e.target.value,
+    });
     // } else {
     //     this.setState({
     //       genreSelected: e.target.value,
     //     })
     // }
-  }
+  };
+
 
   render() {
     return (
@@ -83,6 +84,7 @@ class PodcastInput extends Component {
             onChange={this.handleChangeText}
           />
           
+
           <label htmlFor="podcastInput"></label>
           <input
             onChange={this.handleChangeText}
@@ -92,15 +94,20 @@ class PodcastInput extends Component {
             value={this.state.podcastInput}
           ></input>
 
-          <select type="genresSelect" id="genreSelect" name="genreSelect" onChange={this.selectChange}>
+          <select
+            type="genresSelect"
+            id="genreSelect"
+            name="genreSelect"
+            onChange={this.selectChange}
+          >
             <option value="">Please select an genre</option>
-            {
-              this.state.genres.map((genre)=>{
-                return(
-                  <option value={genre.id} key={genre.id}>{genre.name}</option>
-                )
-              })
-            }
+            {this.state.genres.map((genre) => {
+              return (
+                <option value={genre.id} key={genre.id}>
+                  {genre.name}
+                </option>
+              );
+            })}
           </select>
 
           {
@@ -134,7 +141,7 @@ class PodcastInput extends Component {
           >
             Click me
           </button>
-        </form>  
+        </form>
       </div>
     );
   }
