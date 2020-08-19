@@ -1,6 +1,54 @@
-// header styles 
-.fas{
+// header styles
+.fas {
   color: $darkGreen;
+}
+// map and transit styles
+.transitMap {
+  padding: 20px;
+  display: flex;
+  margin: 100px;
+}
+
+.transit {
+  width: 300px;
+  height: 150px;
+  border-radius: 20px;
+  padding: 20px;
+  color: #c2edd8;
+  background: #001e31;
+  position: relative;
+  animation-name: transit;
+  animation-duration: 3s;
+  animation-delay: 0.5s;
+  animation-fill-mode: both;
+}
+
+.map {
+  width: 300px;
+  margin-left: 100px;
+ 
+  
+
+  img {
+    width: 100%;
+  }
+}
+
+@keyframes transit {
+  from {
+    left: -500px;
+  }
+  to {
+    left: 0;
+  }
+}
+
+
+
+.mode {
+  font-size: 30px;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 ul {
@@ -12,15 +60,15 @@ ul {
 
 // Image button styles
 .podcastButton {
-  border: 2px solid transparent;
-  appearance: none;
   background: none;
+  border: 2px solid transparent;
 
   &:hover,
   &:focus {
     border: 2px solid $darkGreen;
   }
 }
+
 
 // input styles
 input,
@@ -38,6 +86,7 @@ fieldset {
   border: none;
 }
 
+
 .wrapper ul li {
   position: relative;
 }
@@ -53,6 +102,7 @@ fieldset {
   left: 0;
   right: 0;
 }
+
 
 .map{
   width: 250px;

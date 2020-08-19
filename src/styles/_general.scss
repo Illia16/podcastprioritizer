@@ -2,26 +2,33 @@ h1{
   font-family: $headerFont;
   color: $black;
   font-size: 50px;
+
+  margin-top: 20px;
+  margin-bottom: 0;
 }
 
-body {
+body, button {
   font-family: $bodyFont;
   font-size: 18px;
   color: $black;
+  line-height: 1.5;
 }
 
 button {
-
-  padding: 5px;
-  margin: 5px;
+  padding: 7px;
   background-color: lightgrey;
-  color: $black; 
 
   border-radius: 5px;
   border: 2px solid transparent;
 
-  &:hover, &focus{
-    background-color: $lightGreen;
-    border: 2px solid $darkGreen;
-  }
+
+}
+
+footer {
+  background-color: $lightGreen;
+  color: $black;
+  text-align: center;
+  padding: 5px 0;
+  border-top: 2px solid $darkGreen;
+  
 }
