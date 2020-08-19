@@ -12,30 +12,13 @@ ul {
 
 // Image button styles
 .podcastButton {
-  border: 2px solid transparent;
-  appearance: none;
   background: none;
+  border: 2px solid transparent;
 
   &:hover,
   &:focus {
     border: 2px solid $darkGreen;
   }
-}
-
-// input styles
-input,
-button {
-  padding: 2px;
-
-  &:focus {
-    outline: none;
-    border: 2px solid $darkGreen;
-  }
-}
-
-// form styles
-fieldset {
-  border: none;
 }
 
 .wrapper ul li {

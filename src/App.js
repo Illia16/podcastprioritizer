@@ -5,6 +5,7 @@ import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
 import PodcastSaved from "./PodcastSaved";
 import firebase from "./database";
+import HeaderSection from "./headerSection";
 
 class App extends Component {
   constructor() {
@@ -58,7 +59,7 @@ class App extends Component {
     }
     dbRef.child(`${this.state.userId}/${id}`).set(podcast)
   }
-  
+
   deletePodcast = (e, key) => {
     e.preventDefault();
     const dbRef = firebase.database().ref(this.state.userId);
@@ -67,7 +68,7 @@ class App extends Component {
 
   }
 
-   // function to modify time from 00:00:00 format to minutes
+  // function to modify time from 00:00:00 format to minutes
   timeChange = (time) => {
     const arr = time.split(":");
     const add =
@@ -208,87 +209,87 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App wrapper">
+      <div className="App">
+        <div className="wrapper">
+          <HeaderSection />
 
-        <header>
-          <h1>Podcast Prioritizer <i className="fas fa-headphones"></i></h1>
-          <p>Can't decide which podcast to listen to on your next journey? Not sure whether you should walk, bike or drive? Use this web app by inputting your 'To', 'From', and a 'Podcast type' to determine which podcast you should listen to, and how you should get there.</p>
-        </header>
-      
-        {/* SAVED PODCAST BY CERTAIN USER */}
-        <ul>
-        {
-          this.state.podcastList.map((podcastItem) => {
-            const {key, podcasts} = podcastItem
-            return (
-              <PodcastSaved key={key} title={podcasts.title} image={podcasts.image} listenURL={podcasts.listenURL} deletePodcast={this.deletePodcast} id={key} />
-            )
-          })
-        }
-        </ul>
+          {/* SAVED PODCAST BY CERTAIN USER */}
+          <ul>
+            {
+              this.state.podcastList.map((podcastItem) => {
+                const { key, podcasts } = podcastItem
+                return (
+                  <PodcastSaved key={key} title={podcasts.title} image={podcasts.image} listenURL={podcasts.listenURL} deletePodcast={this.deletePodcast} id={key} />
+                )
+              })
+            }
+          </ul>
 
 
-        {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
-        
-        {/* FORM INPUT */}
-        <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
-      
-        <div className="transitMap">
-          <div className="map">
-            <img src={this.state.mapUrl} />
+          {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
+
+          {/* FORM INPUT */}
+          <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
+
+          <div className="transitMap">
+            <div className="map">
+              <img src={this.state.mapUrl} />
+            </div>
+
+            <ul
+              className="transit"
+              style={{
+                display: this.state.displayTransit ? "block" : "none",
+              }}
+            >
+              {
+                // walk time
+                this.state.transitTime.pedestrian <= 1 ? (
+                  <li>walk time: {this.state.transitTime.pedestrian} minute</li>
+                ) : (
+                    <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
+                  )
+                // bike time
+              }
+
+              {
+                this.state.transitTime.bicycle <= 1 ? (
+                  <li>bike time: {this.state.transitTime.bicycle} minute</li>
+                ) : (
+                    <li>bike time: {this.state.transitTime.bicycle} minutes</li>
+                  )
+                // car time
+              }
+
+              {this.state.transitTime.fastest <= 1 ? (
+                <li>car time: {this.state.transitTime.fastest} minute</li>
+              ) : (
+                  <li>car time: {this.state.transitTime.fastest} minutes</li>
+                )}
+            </ul>
           </div>
 
-          <ul
-            className="transit"
-            style={{
-              display: this.state.displayTransit ? "block" : "none",
-            }}
-          >
+          {/* LIST WITH RESULTS */}
+          <ul>
             {
-              // walk time
-              this.state.transitTime.pedestrian <= 1 ? (
-                <li>walk time: {this.state.transitTime.pedestrian} minute</li>
-              ) : (
-                <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
-              )
-              // bike time
+              this.state.podcasts.map((podcast) => {
+                const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
+                return (
+                  <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} />
+                )
+              })
             }
-
-            {
-              this.state.transitTime.bicycle <= 1 ? (
-                <li>bike time: {this.state.transitTime.bicycle} minute</li>
-              ) : (
-                <li>bike time: {this.state.transitTime.bicycle} minutes</li>
-              )
-              // car time
-            }
-
-            {this.state.transitTime.fastest <= 1 ? (
-              <li>car time: {this.state.transitTime.fastest} minute</li>
-            ) : (
-              <li>car time: {this.state.transitTime.fastest} minutes</li>
-            )}
           </ul>
-        </div>
 
-        {/* LIST WITH RESULTS */}
-         <ul>
           {
-            this.state.podcasts.map((podcast) => {
-              const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
-              return (
-                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} />
-              )
-            })
+            // START OVER BUTTON. Only gets visible when there's a list of podcasts on the page.
+            this.state.podcasts.length !== 0 ? (
+              <button onClick={this.clearResults}>Start over</button>
+            ) : null
           }
-        </ul>
 
-        {
-          // START OVER BUTTON. Only gets visible when there's a list of podcasts on the page.
-          this.state.podcasts.length !== 0 ? (
-            <button onClick={this.clearResults}>Start over</button>
-          ) : null
-        }
+        </div>
+        <footer>Copyright &copy; Podcast Prioritizer | Made at Juno College</footer>
       </div>
     );
   }
