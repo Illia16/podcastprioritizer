@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import "./App.scss";
+import MapMode from './MapMode'
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
 import PodcastSaved from "./PodcastSaved";
@@ -10,19 +11,18 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      results: [],
       modes: ["bicycle", "pedestrian", "fastest"],
       genres: [],
       transitTime: {},
       podcasts: [],
       mapUrl: "",
-      displayTransit: false,
       user: null,
       userId: "anonymous",
       podcastList: []
     };
   }
 
+  // Login method for Google Authentication
   login = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     const auth = firebase.auth();
@@ -36,6 +36,7 @@ class App extends Component {
     })
   }
 
+  // Logout method for Google Authentication
   logout = () => {
     const auth = firebase.auth();
     auth.signOut().then(() => {
@@ -47,22 +48,34 @@ class App extends Component {
     })
   }
 
+  // Save podcast to user list when button is clicked
   savePodcast = (e, title, image, listenUrl, id) => {
     const dbRef = firebase.database().ref();
 
+    // Prevent default
     e.preventDefault();
+
+    // Create a new object with required items
     const podcast = {
       title: title,
       image: image,
       listenUrl: listenUrl,
     }
+
+    // Go to the user's ID and the podcast ID and set the above object
     dbRef.child(`${this.state.userId}/${id}`).set(podcast)
   }
   
+  // Delete podcast item from the user's list
   deletePodcast = (e, key) => {
+
+    // Prevent default
     e.preventDefault();
+
+    // Go to the user's ID in the database
     const dbRef = firebase.database().ref(this.state.userId);
 
+    // Remove the podcast based on its ID
     dbRef.child(key).remove();
 
   }
@@ -70,20 +83,16 @@ class App extends Component {
    // function to modify time from 00:00:00 format to minutes
   timeChange = (time) => {
     const arr = time.split(":");
-    const add =
-      parseInt(arr[0] * 60) + parseInt(arr[1]) + parseInt(arr[2] / 60);
-
+    const add = parseInt(arr[0] * 60) + parseInt(arr[1]) + parseInt(arr[2] / 60);
     return add;
   };
 
   // making an API call for ROUTE
-  locationData = (e, from, to) => {
+  handleSubmit = (e, from, to) => {
+    // Prevent default
     e.preventDefault();
 
-    const resultsArray = [];
-    const timeInMins = {};
-
-    if (from !== "" && to !== "") {
+    // Axios call to mapquest API to get the map of the route  
       axios({
         url: `https://www.mapquestapi.com/staticmap/v5/map`,
         method: `GET`,
@@ -102,8 +111,8 @@ class App extends Component {
         console.log(res);
         this.setState({ mapUrl: res.request.responseURL });
       });
-    }
-
+    
+    // For each mode of transportation, find the transit time, convert it to minutes and save it to state
     this.state.modes.forEach((mode) => {
       axios({
         url: `https://www.mapquestapi.com/directions/v2/route`,
@@ -118,33 +127,25 @@ class App extends Component {
         },
       })
         .then((res) => {
-          console.log(res.data.route);
-          resultsArray.push(res.data.route);
-
-          timeInMins[mode] = this.timeChange(res.data.route.formattedTime);
-          console.log(timeInMins);
+          console.log(res);
+          const timeCopy = { ...this.state.transitTime }
+          timeCopy[mode] = this.timeChange(res.data.route.formattedTime);
+          this.setState({
+            transitTime: timeCopy,
+          });
         })
         .catch((er) => {
           console.log(er);
         });
     });
-
-    // change to async LATER!!!!
-    setTimeout(() => {
-      this.setState({
-        results: resultsArray,
-        transitTime: timeInMins,
-        displayTransit: true,
-      });
-      console.log(this.state.transitTime);
-    }, 800);
-    
   };
 
   // making an API call for PODCAST
   podcastCall = (e, inputText, genreSel) => {
+    // Prevent default
     e.preventDefault();
 
+    // call the listennotes API and search for podcasts
     axios({
       url: `https://listen-api.listennotes.com/api/v2/search`,
       method: `GET`,
@@ -165,6 +166,7 @@ class App extends Component {
     });
   };
 
+  // CLear the list of podcast results from the page
   clearResults = () => {
     this.setState({
       podcasts: [],
@@ -173,9 +175,11 @@ class App extends Component {
     window.scrollTo(0, 0);
   };
 
+  // componentDidMount method
   componentDidMount() {
     const auth = firebase.auth();
 
+    // Check to see if the user was already logged in and set the state again
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.setState({
@@ -183,12 +187,15 @@ class App extends Component {
         });
       }
 
+      // Set the userId state again
       this.setState({
         userId: this.state.user.uid
       })
 
+      // Reference the userId in the database
       const dbRef = firebase.database().ref(this.state.userId);
 
+      // On load/change grab the user's saved list of podcasts and save to state
       dbRef.on('value', (response) => {
 
         console.log(dbRef);
@@ -202,23 +209,22 @@ class App extends Component {
         this.setState({
           podcastList: podArray
         })
-
       })
     })
   }
 
+  // render method
   render() {
     return (
       <div className="App wrapper">
 
-          <header>
-          <h1>Podcast Prioritizer <i class="fas fa-headphones"></i>
-
-          </h1>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis ducimus laudantium quisquam, necessitatibus vel adipisci officiis nesciunt dolorum, distinctio, eaque deleniti sequi! Soluta officia cumque at alias cupiditate nesciunt exercitationem?</p>
+        {/* Header component */}
+        <header>
+          <h1>Podcast Prioritizer <i className="fas fa-headphones"></i></h1>
+          <p>Can't decide which podcast to listen to on your next journey? Not sure whether you should walk, bike or drive? Use this web app by inputting your 'To', 'From', and a 'Podcast type' to determine which podcast you should listen to, and how you should get there.</p>
         </header>
       
-        {/* LIST WITH RESULTS */}
+        {/* SAVED PODCAST BY CERTAIN USER */}
         <ul>
         {
           this.state.podcastList.map((podcastItem) => {
@@ -230,50 +236,17 @@ class App extends Component {
         }
         </ul>
 
-
+        {/* Log In/ Log Out button */}
         {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
         
         {/* FORM INPUT */}
-        <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
-      
-        <div className="transitMap">
-          <div className="map">
-            <img src={this.state.mapUrl} />
-          </div>
+        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} />
+        
+        {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
+        <MapMode map={this.state.mapUrl} transitTime={this.state.transitTime}/>
+        
 
-          <ul
-            className="transit"
-            style={{
-              display: this.state.displayTransit ? "block" : "none",
-            }}
-          >
-            {
-              // walk time
-              this.state.transitTime.pedestrian <= 1 ? (
-                <li>walk time: {this.state.transitTime.pedestrian} minute</li>
-              ) : (
-                <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
-              )
-              // bike time
-            }
-
-            {
-              this.state.transitTime.bicycle <= 1 ? (
-                <li>bike time: {this.state.transitTime.bicycle} minute</li>
-              ) : (
-                <li>bike time: {this.state.transitTime.bicycle} minutes</li>
-              )
-              // car time
-            }
-
-            {this.state.transitTime.fastest <= 1 ? (
-              <li>car time: {this.state.transitTime.fastest} minute</li>
-            ) : (
-              <li>car time: {this.state.transitTime.fastest} minutes</li>
-            )}
-          </ul>
-        </div>
-
+        {/* LIST OF PODCASTS FROM THE SEARCH */}
          <ul>
           {
             this.state.podcasts.map((podcast) => {
@@ -285,8 +258,8 @@ class App extends Component {
           }
         </ul>
 
+        {/* CLEAR THE LIST OF PODCAST RESULTS */}
         {
-          // START OVER BUTTON. Only gets visible when there's a list of podcasts on the page.
           this.state.podcasts.length !== 0 ? (
             <button onClick={this.clearResults}>Start over</button>
           ) : null

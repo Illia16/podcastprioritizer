@@ -127,14 +127,15 @@ class PodcastInput extends Component {
 
               } else {
                 this.props.inputText(event, this.state.podcastInput, this.state.genreSelected);
-                this.props.locationData(event, this.state.userInputFrom, this.state.userInputTo);
-                this.setState({
-                  podcastInput: "",
-                  userInputFrom: "",
-                  userInputTo: "",
-                  genreSelected: "",
-                  popUpError: false,
-                })
+                this.props.handleSubmit(event, this.state.userInputFrom, this.state.userInputTo);
+                
+                // this.setState({
+                //   podcastInput: "",
+                //   userInputFrom: "",
+                //   userInputTo: "",
+                //   genreSelected: "",
+                //   popUpError: false,
+                // })
               }
             }
           }

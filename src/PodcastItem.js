@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Suggestion from "./Suggestion";
 
 class PodcastItem extends Component {
     constructor() {
@@ -8,7 +9,7 @@ class PodcastItem extends Component {
         }
     }
 
-    displaySuggestion = (e) => {
+    showHideSuggestion = (e) => {
         e.preventDefault();
         this.setState({
             displaySuggestion: !this.state.displaySuggestion,
@@ -19,7 +20,7 @@ class PodcastItem extends Component {
         const { transitTime, title, description, length, image, savePodcast, listenUrl, id } = this.props;
         return (
             <li>
-                <button onClick={this.displaySuggestion} className="podcastButton">
+                <button onClick={ this.showHideSuggestion }className="podcastButton">
                     <div className="thumbnailWrapper">
                         <img src={image} alt={title}></img>
                         <p>{title}</p>
@@ -28,31 +29,12 @@ class PodcastItem extends Component {
 
                 <button onClick={(e) => { savePodcast(e, title, image, listenUrl, id) }}>Save podcast</button>
 
-                <div
-                    onClick={this.displaySuggestion}
-                    className="suggestion"
-                    style={{ display: this.state.displaySuggestion ? "block" : "none", }} >
-                    {
-                        Math.round(length / 60) <= 1 ?
-                            <p>podcast length:{Math.round(length / 60)} minute </p> :
-                            <p>podcast length:{Math.round(length / 60)} minutes</p>
-                    }
-
-                    <p> walk:{transitTime.pedestrian} minutes</p>
-                    <p>bike:{transitTime.bicycle} minutes</p>
-                    <p>drive:{transitTime.fastest} minutes</p>
-
-                    {
-                        length / 60 < transitTime.fastest ?
-                            <p>suggestion: you should drive</p> :
-                            length / 60 < transitTime.bicycle ?
-                                <p>suggestion: you should bike</p> :
-                                <p>suggestion: you should walk</p>
-                    }
-                </div>
+                <Suggestion showHideSuggestion={this.showHideSuggestion} stateSuggestion={this.state} propToprop={this.props}/>
             </li>
         )
     }
 }
 
 export default PodcastItem;
+
+{/* <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} /> */}
