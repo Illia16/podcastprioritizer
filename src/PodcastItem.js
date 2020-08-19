@@ -36,5 +36,3 @@ class PodcastItem extends Component {
 }
 
 export default PodcastItem;
-
-{/* <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} /> */}

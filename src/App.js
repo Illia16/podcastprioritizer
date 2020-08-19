@@ -5,6 +5,7 @@ import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
 import PodcastSaved from "./PodcastSaved";
 import firebase from "./database";
+import Error from "./Error";
 
 class App extends Component {
   constructor() {
@@ -17,8 +18,24 @@ class App extends Component {
       mapUrl: "",
       user: null,
       userId: "anonymous",
-      podcastList: []
+      podcastList: [],
+      popUpError: false,
     };
+    
+    this.hideError = this.hideError.bind(this);
+    this.showError = this.showError.bind(this);
+  }
+
+  hideError() {
+    this.setState({
+      popUpError: false
+    });
+  }
+
+  showError() {
+    this.setState({
+      popUpError: true
+    });
   }
 
   // Login method for Google Authentication
@@ -126,6 +143,14 @@ class App extends Component {
         },
       })
         .then((res) => {
+          console.log("Distance in miles", res.data.route.distance);
+
+          if (res.data.route.distance > 100) {
+            this.setState({
+              popUpError: true,
+            })
+          }
+
           const timeCopy = { ...this.state.transitTime }
           timeCopy[mode] = this.timeChange(res.data.route.formattedTime);
           this.setState({
@@ -164,9 +189,11 @@ class App extends Component {
     });
   };
 
-  // CLear the list of podcast results from the page
+  // Clear the list of podcast results from the page
   clearResults = () => {
     this.setState({
+      mapUrl: "",
+      transitTime: {},
       podcasts: [],
     });
 
@@ -238,12 +265,16 @@ class App extends Component {
         {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
         
         {/* FORM INPUT */}
-        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} />
+        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} error={this.state} hideErrorWindow={this.hideError} closeError={this.showError}/>
+        
+        {
+          this.state.popUpError ? <Error hideErrorWindow={this.hideError} />  : null
+        }
         
         {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
         <div className="transitMap">
           <div className="map">
-            <img src={this.state.mapUrl} />
+            <img src={this.state.mapUrl}/>
           </div>
 
           <ul
@@ -251,8 +282,8 @@ class App extends Component {
             style={{
               display: this.state.transitTime.bicycle && this.state.transitTime.fastest && this.state.transitTime.pedestrian ? "block" : "none",
             }}
-           >
-             
+          >
+            
             {
               // walk time
               this.state.transitTime.pedestrian <= 1 ? (
@@ -281,7 +312,7 @@ class App extends Component {
         </div>
 
         {/* LIST OF PODCASTS FROM THE SEARCH */}
-         <ul>
+        <ul>
           {
             this.state.podcasts.map((podcast) => {
               const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast

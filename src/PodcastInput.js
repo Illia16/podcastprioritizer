@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import axios from "axios";
-
 import Error from "./Error";
 
 class PodcastInput extends Component {
@@ -12,7 +11,6 @@ class PodcastInput extends Component {
       userInputTo: "",
       genres: [],
       genreSelected: "",
-      popUpError: false,
     };
   }
 
@@ -44,25 +42,15 @@ class PodcastInput extends Component {
     // getting the name of the selected option
     console.log(e.target.options[e.target.selectedIndex].text);
 
-    // this.setState({
-    //   podcastInput: "",
-    //   genreSelected: "",
-    // })
-
-    // if (this.state.podcastInput === "") {
     this.setState({
       podcastInput: e.target.options[e.target.selectedIndex].text,
       genreSelected: e.target.value,
     });
-    // } else {
-    //     this.setState({
-    //       genreSelected: e.target.value,
-    //     })
-    // }
   };
 
 
   render() {
+    const {hideErrorWindow, closeError, error:{ popUpError } } = this.props;
     return (
       <div>
         <form>
@@ -111,7 +99,7 @@ class PodcastInput extends Component {
           </select>
 
           {
-            this.state.popUpError ? <Error /> : null
+            popUpError ? <Error hideErrorWindow={hideErrorWindow}/> : null
           }
           
           <button
@@ -119,22 +107,16 @@ class PodcastInput extends Component {
               event.preventDefault();
 
               if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo) {
-                console.log('Error')
-
-                this.setState({
-                  popUpError: true,
-                })
-
+                closeError()
               } else {
                 this.props.inputText(event, this.state.podcastInput, this.state.genreSelected);
                 this.props.handleSubmit(event, this.state.userInputFrom, this.state.userInputTo);
-                // this.setState({
-                //   podcastInput: "",
-                //   userInputFrom: "",
-                //   userInputTo: "",
-                //   genreSelected: "",
-                //   popUpError: false,
-                // })
+                this.setState({
+                  podcastInput: "",
+                  userInputFrom: "",
+                  userInputTo: "",
+                  genreSelected: "",
+                })
               }
             }
           }
