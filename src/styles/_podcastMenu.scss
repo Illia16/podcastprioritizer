@@ -1,20 +1,43 @@
-.podcastUserList {
-    display: flex;
-    flex-direction: column;
+.podcastMenu {
+    position: absolute;
+    top: 56px;
+    right: 0;
+    background: cyan;
+    width: 300px;
+    padding: 10px;
+    background-color: #001e31;
+    border-radius: 5px;
+
+    .podcastUserList {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .loginButton {
+        width: 100px;
+        margin: 10px 0 0 90px;
+    }
+}
+
+.menuButton {
+    position: absolute;
+    top: 10px;
+    right: 0;
 }
 
 .podcastItem {
-    width: 300px;
+    background-color: #c2edd8;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     .podcastNameImage {
         display: flex;
 
         .podcastImageWrapper {
             width: 30%;
-
-            img {
-                width: 100%;
-            }
         }
 
         .podcastNameDelete {
@@ -28,7 +51,7 @@
                 width: 190px;
             }
 
-                button {
+            button {
                 background: none;
                 margin: 0;
                 padding: 5px;

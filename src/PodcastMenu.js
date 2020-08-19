@@ -21,7 +21,7 @@ const PodcastMenu = (props) => {
                 : null}
 
             {/* Log In/ Log Out button */}
-            {user ? <button className="loginButton" onClick={logout}>Log Out</button> : <button onClick={login}>Log In </button>}
+            {user ? <button className="loginButton" onClick={logout}>Log Out</button> : <button className="loginButton" onClick={login}>Log In </button>}
 
         </div>
     )
