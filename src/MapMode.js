@@ -2,18 +2,18 @@ import React from 'react'
 
 const MapMode =(props)=>{
  return (
-   <div className="transitMap">
-     <ul
-       className="transit"
-       style={{
-         display:
-           props.transitTime.bicycle &&
-           props.transitTime.fastest &&
-           props.transitTime.pedestrian
-             ? "block"
-             : "none",
-       }}
-     >
+   <div
+     className="transitMap"
+     style={{
+       display:
+         props.transitTime.bicycle &&
+         props.transitTime.fastest &&
+         props.transitTime.pedestrian
+           ? "flex"
+           : "none",
+     }}
+   >
+     <div className="transit">
        {
          // walk time
          props.transitTime.pedestrian <= 1 ? (
@@ -69,9 +69,9 @@ const MapMode =(props)=>{
            {props.transitTime.fastest} minutes
          </li>
        )}
-     </ul>
+     </div>
      <div className="map">
-       <img src={props.map} />
+       <img className="map" src={props.map} />
      </div>
    </div>
  );
