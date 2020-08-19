@@ -3,7 +3,7 @@ import axios from "axios";
 import "./App.scss";
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
-import PodcastSaved from "./PodcastSaved";
+import PodcastMenu from './PodcastMenu';
 import firebase from "./database";
 import HeaderSection from "./headerSection";
 
@@ -18,7 +18,8 @@ class App extends Component {
       mapUrl: "",
       user: null,
       userId: "anonymous",
-      podcastList: []
+      podcastList: [],
+      menuOpen: false
     };
   }
 
@@ -49,7 +50,7 @@ class App extends Component {
   }
 
   // Save podcast to user list when button is clicked
-  savePodcast = (e, title, image, listenUrl, id) => {
+  savePodcast = (e, title, image, audio, id) => {
     const dbRef = firebase.database().ref();
 
     // Prevent default
@@ -59,7 +60,7 @@ class App extends Component {
     const podcast = {
       title: title,
       image: image,
-      listenUrl: listenUrl,
+      audio: audio,
     }
 
     // Go to the user's ID and the podcast ID and set the above object
@@ -80,7 +81,13 @@ class App extends Component {
 
   }
 
-  // function to modify time from 00:00:00 format to minutes
+  podcastMenu = () => {
+    this.setState({
+      menuOpen: !this.state.menuOpen
+    })
+  }
+
+   // function to modify time from 00:00:00 format to minutes
   timeChange = (time) => {
     const arr = time.split(":");
     const add = parseInt(arr[0] * 60) + parseInt(arr[1]) + parseInt(arr[2] / 60);
@@ -108,7 +115,6 @@ class App extends Component {
           margin: 40,
         },
       }).then((res) => {
-        console.log(res);
         this.setState({ mapUrl: res.request.responseURL });
       });
     
@@ -158,7 +164,6 @@ class App extends Component {
         genre_ids: genreSel,
       },
     }).then((res) => {
-      console.log(res.data.results);
       this.setState({
         podcasts: res.data.results,
       });
@@ -196,8 +201,6 @@ class App extends Component {
 
       // On load/change grab the user's saved list of podcasts and save to state
       dbRef.on('value', (response) => {
-
-        console.log(dbRef);
         const podArray = [];
         const data = response.val()
 
@@ -220,22 +223,13 @@ class App extends Component {
         <div className="wrapper">
           <HeaderSection />
 
-          {/* SAVED PODCAST BY CERTAIN USER */}
-          <ul>
-            {
-              this.state.podcastList.map((podcastItem) => {
-                const { key, podcasts } = podcastItem
-                return (
-                  <PodcastSaved key={key} title={podcasts.title} image={podcasts.image} listenURL={podcasts.listenURL} deletePodcast={this.deletePodcast} id={key} />
-                )
-              })
-            }
-          </ul>
+        {/* MENU TO OPEN/CLOSE PODCAST LIST AND LOGIN BUTTON */}
+        <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars"></i></button>
 
+        {/* LOGIN AND PODCAST LIST MENU */}
+        {this.state.menuOpen ? <PodcastMenu key="podcastMenu" user={this.state.user} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} /> : null}
 
-          {this.state.user ? <button onClick={this.logout}>Log out</button> : <button onClick={this.login}>Log In </button>}
-
-          {/* FORM INPUT */}
+        {/* FORM INPUT */}
           <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
 
           <div className="transitMap">
@@ -277,7 +271,7 @@ class App extends Component {
             </ul>
           </div>
 
-          {/* LIST WITH RESULTS */}
+          {/* LIST OF PODCASTS FROM THE SEARCH */}
           <ul>
             {
               this.state.podcasts.map((podcast) => {
@@ -288,16 +282,6 @@ class App extends Component {
               })
             }
           </ul>
-
-        {/* LIST OF PODCASTS FROM THE SEARCH */}
-         <ul>
-
-          {
-            // START OVER BUTTON. Only gets visible when there's a list of podcasts on the page.
-            this.state.podcasts.length !== 0 ? (
-              <button onClick={this.clearResults}>Start over</button>
-            ) : null
-          }
 
          {/* CLEAR THE LIST OF PODCAST RESULTS */}
           {
