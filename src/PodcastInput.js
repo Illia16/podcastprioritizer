@@ -38,10 +38,8 @@ class PodcastInput extends Component {
     });
   }
 
+  // getting the name of the selected option
   selectChange = (e) => {
-    // getting the name of the selected option
-    console.log(e.target.options[e.target.selectedIndex].text);
-
     this.setState({
       podcastInput: e.target.options[e.target.selectedIndex].text,
       genreSelected: e.target.value,
@@ -50,8 +48,8 @@ class PodcastInput extends Component {
 
   checkForChar = () => {
     const regex = /^[A-Za-z0-9 ]+$/;
-    const isValid = regex.test(this.state.userInputFrom);
-    return isValid;
+    const isNotValid = regex.test(this.state.userInputFrom);
+    return isNotValid;
   };
 
   render() {
@@ -87,7 +85,6 @@ class PodcastInput extends Component {
             </div>
           </section>
 
-
           <section className="podcastDetails">
             <div className="podcastSearch">
               <h2><i className="fas fa-podcast" aria-label="Icon of a microphone"></i> Type in your podcast details</h2>
@@ -110,7 +107,7 @@ class PodcastInput extends Component {
                 name="genreSelect"
                 onChange={this.selectChange}
               >
-                <option value="">Please select an genre</option>
+                <option value="">Please select a genre</option>
                 {this.state.genres.map((genre) => {
                   return (
                     <option value={genre.id} key={genre.id}>
@@ -121,16 +118,15 @@ class PodcastInput extends Component {
               </select>
             </div>
           </section>
-          {
-            popUpError ? <Error hideErrorWindow={hideErrorWindow}/> : null
-          }
+
+          {popUpError && <Error hideErrorWindow={hideErrorWindow}/>}
 
           <button
             className="formButton"
             onClick={(event) => {
               event.preventDefault();
               // || this.checkForChar() === true
-              if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo ) {
+              if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo || this.checkForChar() === false) {
                 showErrorWindow()
               } else {
                 this.props.inputText(event, this.state.podcastInput, this.state.genreSelected);

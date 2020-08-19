@@ -19,7 +19,7 @@ class App extends Component {
       transitTime: {},
       podcasts: [],
       mapUrl: "",
-      user: null,
+      loggedIn: false,
       userId: "anonymous",
       podcastList: [],
       popUpError: false,
@@ -31,12 +31,14 @@ class App extends Component {
     this.showError = this.showError.bind(this);
   }
 
+  // Set the popupError to false to hide the error component
   hideError() {
     this.setState({
       popUpError: false,
     });
   }
 
+  // Set popupError to true to show the error component
   showError() {
     this.setState({
       popUpError: true
@@ -51,8 +53,8 @@ class App extends Component {
     auth.signInWithPopup(provider).then((result) => {
       const user = result.user;
       this.setState({
-        user,
         userId: user.uid,
+        loggedIn: true
       })
     })
   }
@@ -62,20 +64,20 @@ class App extends Component {
     const auth = firebase.auth();
     auth.signOut().then(() => {
       this.setState({
-        user: null,
         userId: "",
-        podcastList: []
+        podcastList: [],
+        loggedIn: false
       })
     })
   }
 
   // Save podcast to user list when button is clicked
   savePodcast = (e, title, image, audio, id) => {
-    const dbRef = firebase.database().ref();
-
     // Prevent default
     e.preventDefault();
 
+    const dbRef = firebase.database().ref();
+    
     // Create a new object with required items
     const podcast = {
       title: title,
@@ -89,7 +91,6 @@ class App extends Component {
   
   // Delete podcast item from the user's list
   deletePodcast = (e, key) => {
-
     // Prevent default
     e.preventDefault();
 
@@ -98,9 +99,9 @@ class App extends Component {
 
     // Remove the podcast based on its ID
     dbRef.child(key).remove();
-
   }
 
+  // Set the open and close state for the menu button
   podcastMenu = () => {
     this.setState({
       menuOpen: !this.state.menuOpen
@@ -149,14 +150,13 @@ class App extends Component {
           from: from,
           to: to,
           routeType: mode,
-         
         },
       })
         .then((res) => {
           if (res.data.route.distance > 100) {
             this.setState({
               tooBig: true,
-              // popUpError: true,
+              popUpError: true,
             })
           } else if (res.data.route.distance < 100){
             this.setState({
@@ -228,13 +228,14 @@ class App extends Component {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.setState({
-          user
+          loggedIn: true
         });
       }
 
       // Set the userId state again
       this.setState({
-        userId: this.state.user.uid
+        userId: user.uid,
+        loggedIn: true
       })
 
       // Reference the userId in the database
@@ -262,62 +263,43 @@ class App extends Component {
 
       <div className="App">
         <div className="wrapper">
-          <HeaderSection />
 
-            {/* MENU TO OPEN/CLOSE PODCAST LIST AND LOGIN BUTTON */}
-            <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars"></i></button>
+        {/* HEADER SECTION COMPONENT */}
+        <HeaderSection />
 
-            {/* LOGIN AND PODCAST LIST MENU */}
-            {this.state.menuOpen ? <PodcastMenu key="podcastMenu" user={this.state.user} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} /> : null}
+        {/* MENU TO OPEN/CLOSE PODCAST LIST AND LOGIN BUTTON */}
+        <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars" aria-label="Button to open login and user podcast menu"></i></button>
 
-            {/* FORM INPUT */}
-            <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} error={this.state} hideErrorWindow={this.hideError} showErrorWindow={this.showError}/>
-            
-            {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
-            {/* var message = speed >= 120 ? 'Too Fast' : (speed >= 80 ? 'Fast' : 'OK'); */}
-            {
-              this.state.popUpError && this.state.tooBig ? <Error hideErrorWindow={this.hideError} />  : (
-              !this.state.tooBig ? 
-              <div> 
-                <MapMode map={this.state.mapUrl} transitTime={this.state.transitTime}/>                   
-                <ul>
-                  {
-                    this.state.podcasts.map((podcast) => {
-                      const { id, image, title_original, description_original, audio_length_sec, audio} = podcast
-                      return (
-                        <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} audio={audio} id={id} />
-                      )
-                    })
-                  }
-                </ul>
-              </div> : null
-              )
-            }
-          
-            {/* LIST OF PODCASTS FROM THE SEARCH */}
-            {/* {
-              this.state.popUpError && this.state.tooBig ? <Error hideErrorWindow={this.hideError} />  :
-                (
-                !this.state.tooBig ? 
-                  <ul>
-                    {
-                      this.state.podcasts.map((podcast) => {
-                        const { id, image, title_original, description_original, audio_length_sec, audio} = podcast
-                        return (
-                          <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} audio={audio} id={id} />
-                        )
-                      })
-                    }
-                  </ul> : null
-                ) 
-            } */}
+        {/* LOGIN AND PODCAST LIST MENU */}
+        {this.state.menuOpen && <PodcastMenu key="podcastMenu" loggedIn={this.state.loggedIn} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} />}
 
-            {/* CLEAR THE LIST OF PODCAST RESULTS */}
-            {
-              this.state.podcasts.length !== 0 && !this.state.tooBig ? (
-              <button onClick={this.clearResults}>Start over</button>
-              ) : null
-            }
+        {/* FORM INPUT */}
+        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} error={this.state} hideErrorWindow={this.hideError} showErrorWindow={this.showError}/>
+        
+        {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
+        {/* var message = speed >= 120 ? 'Too Fast' : (speed >= 80 ? 'Fast' : 'OK'); */}
+        {
+          this.state.popUpError && this.state.tooBig ? <Error hideErrorWindow={this.hideError} />  : (
+          !this.state.tooBig ? 
+          <div> 
+            <MapMode map={this.state.mapUrl} transitTime={this.state.transitTime}/>                   
+            <ul>
+              {
+                this.state.podcasts.map((podcast) => {
+                  const { id, image, title_original, description_original, audio_length_sec, audio} = podcast
+                  return (
+                    <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} audio={audio} id={id} />
+                  )
+                })
+              }
+            </ul>
+          </div> : null
+          )
+        }
+
+        {/* CLEAR THE LIST OF PODCAST RESULTS */}
+        {this.state.podcasts.length !== 0 && !this.state.tooBig &&<button onClick={this.clearResults}>Start over</button>}
+
         </div>
         <footer>Copyright &copy; Podcast Prioritizer | Made at Juno College</footer>
       </div>
