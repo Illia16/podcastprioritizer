@@ -48,15 +48,21 @@ class PodcastInput extends Component {
     });
   };
 
+  checkForChar = () => {
+    const regex = /^[A-Za-z0-9 ]+$/;
+    const isValid = regex.test(this.state.userInputFrom);
+    return isValid;
+  };
 
   render() {
-    const {hideErrorWindow, closeError, error:{ popUpError } } = this.props;
+    const {hideErrorWindow, showErrorWindow, error:{ popUpError } } = this.props;
+    console.log(this.checkForChar());
     return (
       <div>
         <form>
 
           <section className="travelDetails">
-            <h2><i class="fas fa-map-marker-alt" aria-label="Icon of a location pin"></i> Type in your travel details</h2>
+            <h2><i className="fas fa-map-marker-alt" aria-label="Icon of a location pin"></i> Type in your travel details</h2>
             <div className="startingPoint">
               <label htmlFor="userInputFrom">Starting Point:</label>
               <input
@@ -84,7 +90,7 @@ class PodcastInput extends Component {
 
           <section className="podcastDetails">
             <div className="podcastSearch">
-              <h2><i class="fas fa-podcast" aria-label="Icon of a microphone"></i> Type in your podcast details</h2>
+              <h2><i className="fas fa-podcast" aria-label="Icon of a microphone"></i> Type in your podcast details</h2>
               <label htmlFor="podcastInput">Podcast Search:</label>
               <input
                 onChange={this.handleChangeText}
@@ -123,18 +129,18 @@ class PodcastInput extends Component {
             className="formButton"
             onClick={(event) => {
               event.preventDefault();
-
-              if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo) {
-                closeError()
+              // || this.checkForChar() === true
+              if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo ) {
+                showErrorWindow()
               } else {
                 this.props.inputText(event, this.state.podcastInput, this.state.genreSelected);
                 this.props.handleSubmit(event, this.state.userInputFrom, this.state.userInputTo);
-                this.setState({
-                  podcastInput: "",
-                  userInputFrom: "",
-                  userInputTo: "",
-                  genreSelected: "",
-                })
+                // this.setState({
+                //   podcastInput: "",
+                //   userInputFrom: "",
+                //   userInputTo: "",
+                //   genreSelected: "",
+                // })
 
               }
             }
