@@ -5,6 +5,7 @@ import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
 import PodcastMenu from './PodcastMenu';
 import firebase from "./database";
+import HeaderSection from "./headerSection";
 
 class App extends Component {
   constructor() {
@@ -217,14 +218,11 @@ class App extends Component {
   // render method
   render() {
     return (
-      <div className="App wrapper">
 
-        {/* Header component */}
-        <header>
-          <h1>Podcast Prioritizer <i className="fas fa-headphones"></i></h1>
-          <p>Can't decide which podcast to listen to on your next journey? Not sure whether you should walk, bike or drive? Use this web app by inputting your 'To', 'From', and a 'Podcast type' to determine which podcast you should listen to, and how you should get there.</p>
-        </header>
-      
+      <div className="App">
+        <div className="wrapper">
+          <HeaderSection />
+
         {/* MENU TO OPEN/CLOSE PODCAST LIST AND LOGIN BUTTON */}
         <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars"></i></button>
 
@@ -232,65 +230,67 @@ class App extends Component {
         {this.state.menuOpen ? <PodcastMenu key="podcastMenu" user={this.state.user} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} /> : null}
 
         {/* FORM INPUT */}
-        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} />
-        
-        {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
-        <div className="transitMap">
-          <div className="map">
-            <img src={this.state.mapUrl} />
+          <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
+
+          <div className="transitMap">
+            <div className="map">
+              <img src={this.state.mapUrl} />
+            </div>
+
+            <ul
+              className="transit"
+              style={{
+                display: this.state.displayTransit ? "block" : "none",
+              }}
+            >
+              {
+                // walk time
+                this.state.transitTime.pedestrian <= 1 ? (
+                  <li>walk time: {this.state.transitTime.pedestrian} minute</li>
+                ) : (
+                    <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
+                  )
+                // bike time
+              }
+
+              {
+                this.state.transitTime.bicycle <= 1 ? (
+                  <li>bike time: {this.state.transitTime.bicycle} minute</li>
+                ) : (
+                    <li>bike time: {this.state.transitTime.bicycle} minutes</li>
+                  )
+                // car time
+              }
+
+              {this.state.transitTime.fastest <= 1 ? (
+                <li>car time: {this.state.transitTime.fastest} minute</li>
+
+              ) : (
+                  <li>car time: {this.state.transitTime.fastest} minutes</li>
+                )}
+            </ul>
           </div>
 
-          <ul
-            className="transit"
-            style={{
-              display: this.state.transitTime.bicycle && this.state.transitTime.fastest && this.state.transitTime.pedestrian ? "block" : "none",
-            }}>
-            
+          {/* LIST OF PODCASTS FROM THE SEARCH */}
+          <ul>
             {
-              // walk time
-              this.state.transitTime.pedestrian <= 1 ? (
-                <li>walk time: {this.state.transitTime.pedestrian} minute</li>
-              ) : (
-                <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
-              )
-              // bike time
+              this.state.podcasts.map((podcast) => {
+                const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
+                return (
+                  <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} />
+                )
+              })
             }
-
-            {
-              this.state.transitTime.bicycle <= 1 ? (
-                <li>bike time: {this.state.transitTime.bicycle} minute</li>
-              ) : (
-                <li>bike time: {this.state.transitTime.bicycle} minutes</li>
-              )
-              // car time
-            }
-
-            {this.state.transitTime.fastest <= 1 ? (
-              <li>car time: {this.state.transitTime.fastest} minute</li>
-            ) : (
-              <li>car time: {this.state.transitTime.fastest} minutes</li>
-            )}
           </ul>
-        </div>
 
-        {/* LIST OF PODCASTS FROM THE SEARCH */}
-        <ul>
+         {/* CLEAR THE LIST OF PODCAST RESULTS */}
           {
-            this.state.podcasts.map((podcast) => {
-              const { id, image, title_original, description_original, audio_length_sec, audio } = podcast
-              return (
-                <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} audio={audio} id={id} />
-              )
-            })
+            this.state.podcasts.length !== 0 ? (
+             <button onClick={this.clearResults}>Start over</button>
+            ) : null
           }
-        </ul>
-
-        {/* CLEAR THE LIST OF PODCAST RESULTS */}
-        {
-          this.state.podcasts.length !== 0 ? (
-            <button onClick={this.clearResults}>Start over</button>
-          ) : null
-        }
+        </div>
+        <footer>Copyright &copy; Podcast Prioritizer | Made at Juno College</footer>
       </div>
     );
   }
