@@ -36,11 +36,12 @@ span{
 .map{
   
   margin-left:50px;
-  position: relative;
-  z-index: 2;
-  border: solid 2px $black;
-  width: 500px;
-  height: 300px; 
+  
+    position: relative;
+    z-index: 2;
+    border: solid 2px $black;
+    width: 500px;
+    height: 300px; 
 }
 
 @keyframes transit {

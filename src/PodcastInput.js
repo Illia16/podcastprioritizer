@@ -46,8 +46,15 @@ class PodcastInput extends Component {
     });
   };
 
+  checkForChar = () => {
+    const regex = /^[A-Za-z0-9 ]+$/;
+    const isNotValid = regex.test(this.state.userInputFrom);
+    return isNotValid;
+  };
+
   render() {
-    const {hideErrorWindow, closeError, error:{ popUpError } } = this.props;
+    const {hideErrorWindow, showErrorWindow, error:{ popUpError } } = this.props;
+    console.log(this.checkForChar());
     return (
       <div>
         <form>
@@ -118,18 +125,18 @@ class PodcastInput extends Component {
             className="formButton"
             onClick={(event) => {
               event.preventDefault();
-
-              if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo) {
-                closeError()
+              // || this.checkForChar() === true
+              if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo || this.checkForChar() === false) {
+                showErrorWindow()
               } else {
                 this.props.inputText(event, this.state.podcastInput, this.state.genreSelected);
                 this.props.handleSubmit(event, this.state.userInputFrom, this.state.userInputTo);
-                this.setState({
-                  podcastInput: "",
-                  userInputFrom: "",
-                  userInputTo: "",
-                  genreSelected: "",
-                })
+                // this.setState({
+                //   podcastInput: "",
+                //   userInputFrom: "",
+                //   userInputTo: "",
+                //   genreSelected: "",
+                // })
 
               }
             }

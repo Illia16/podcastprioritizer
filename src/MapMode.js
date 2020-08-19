@@ -19,7 +19,7 @@ const MapMode =(props)=>{
          props.transitTime.pedestrian <= 1 ? (
            <li>
              <span className="mode">
-               <i class="fas fa-walking"></i>
+               <i className="fas fa-walking"></i>
              </span>{" "}
              {props.transitTime.pedestrian} minute
            </li>
