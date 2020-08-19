@@ -271,9 +271,9 @@ class App extends Component {
           <ul>
             {
               this.state.podcasts.map((podcast) => {
-                const { id, image, title_original, description_original, audio_length_sec, listennotes_url } = podcast
+                const { id, image, title_original, description_original, audio_length_sec, audio} = podcast
                 return (
-                  <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} listenUrl={listennotes_url} id={id} />
+                  <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} audio={audio} id={id} />
                 )
               })
             }
