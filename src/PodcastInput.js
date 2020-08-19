@@ -66,56 +66,74 @@ class PodcastInput extends Component {
     return (
       <div>
         <form>
-          <label htmlFor="userInputFrom">From</label>
-          <input
-            type="text"
-            name="userInputFrom"
-            id="userInputFrom"
-            value={this.state.userInputFrom}
-            onChange={this.handleChangeText}
-          />
 
-          <label htmlFor="userInputTo">To</label>
-          <input
-            type="text"
-            name="userInputTo"
-            id="userInputTo"
-            value={this.state.userInputTo}
-            onChange={this.handleChangeText}
-          />
-          
+          <section className="travelDetails">
+            <h2><i class="fas fa-map-marker-alt" aria-label="Icon of a location pin"></i> Type in your travel details</h2>
+            <div className="startingPoint">
+              <label htmlFor="userInputFrom">Starting Point:</label>
+              <input
+                type="text"
+                name="userInputFrom"
+                id="userInputFrom"
+                value={this.state.userInputFrom}
+                onChange={this.handleChangeText}
+                placeholder="12 Bloor Street Toronto"
+              />
+            </div>
+            <div className="destination">
+              <label htmlFor="userInputTo">Destination:</label>
+              <input
+                type="text"
+                name="userInputTo"
+                id="userInputTo"
+                value={this.state.userInputTo}
+                onChange={this.handleChangeText}
+                placeholder="11 Yonge Street Toronto"
+              />
+            </div>
+          </section>
 
-          <label htmlFor="podcastInput"></label>
-          <input
-            onChange={this.handleChangeText}
-            type="text"
-            name="podcastInput"
-            id="podcastInput"
-            value={this.state.podcastInput}
-          ></input>
 
-          <select
-            type="genresSelect"
-            id="genreSelect"
-            name="genreSelect"
-            onChange={this.selectChange}
-          >
-            <option value="">Please select an genre</option>
-            {this.state.genres.map((genre) => {
-              return (
-                <option value={genre.id} key={genre.id}>
-                  {genre.name}
-                </option>
-              );
-            })}
-          </select>
-
+          <section className="podcastDetails">
+            <div className="podcastSearch">
+              <h2><i class="fas fa-podcast" aria-label="Icon of a microphone"></i> Type in your podcast details</h2>
+              <label htmlFor="podcastInput">Podcast Search:</label>
+              <input
+                onChange={this.handleChangeText}
+                type="text"
+                name="podcastInput"
+                id="podcastInput"
+                value={this.state.podcastInput}
+                placeholder="ex: genre, title, creator"
+                aria-label="example: genre, title, creator"
+              ></input>
+            </div>
+            <div className="podcastDropDown">
+              <p>Or pick a genre:</p>
+              <select
+                type="genresSelect"
+                id="genreSelect"
+                name="genreSelect"
+                onChange={this.selectChange}
+              >
+                <option value="">Please select an genre</option>
+                {this.state.genres.map((genre) => {
+                  return (
+                    <option value={genre.id} key={genre.id}>
+                      {genre.name}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          </section>
           {
             this.state.popUpError ? <Error /> : null
           }
-          
+
           <button
-            onClick={ (event) => {
+            className="formButton"
+            onClick={(event) => {
               event.preventDefault();
 
               if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo) {
@@ -138,9 +156,9 @@ class PodcastInput extends Component {
                 // })
               }
             }
-          }
+            }
           >
-            Click me
+            Find suggestions!
           </button>
         </form>
       </div>

@@ -1,0 +1,90 @@
+form {
+margin: 20px 0;
+display: flex;
+flex-direction: column;
+justify-content: center;
+
+background-color: $lightGreen;
+padding: 10px;
+border: 2px solid $darkGreen;
+border-radius: 5px;
+
+h2{
+    margin-top: 10px;
+}
+p{
+    padding: 0;
+    margin: 0;
+}
+}
+
+// travel details sections
+.travelDetails{
+display: flex;
+flex-direction: column;
+flex: 1;
+
+    .startingPoint{
+        margin-bottom: 10px;
+
+        label{
+            margin-right: 5px;
+     }
+    }
+
+    .destination {
+
+        label{ 
+            margin-right: 22px;
+        }
+    }
+}
+
+// Podcast details
+.podcastDetails{
+    label{
+        margin-right: 5px;
+    }
+}
+
+.podcastSearch{
+margin-bottom: 10px;
+}
+
+.podcastDropDown{
+    display: flex;
+
+    p{
+        margin-right: 7px;
+    }
+}
+// input, button styles
+input,
+.formButton {
+  &:focus {
+    outline: none;
+    border: 2px solid $darkGreen;
+  }
+}
+
+.formButton{
+  margin-top: 10px;
+  border: 2px solid transparent;
+  width: max-content;
+
+  &:hover, &:focus{
+    background-color: $darkGreen;
+    border: 2px solid $darkGreen;
+    color: white;
+  }
+}
+
+input{
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    width: 50%;
+}
+
+// form styles
+// fieldset {
+//     border: none;
+//   }
