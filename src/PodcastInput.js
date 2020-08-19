@@ -38,16 +38,13 @@ class PodcastInput extends Component {
     });
   }
 
+  // getting the name of the selected option
   selectChange = (e) => {
-    // getting the name of the selected option
-    console.log(e.target.options[e.target.selectedIndex].text);
-
     this.setState({
       podcastInput: e.target.options[e.target.selectedIndex].text,
       genreSelected: e.target.value,
     });
   };
-
 
   render() {
     const {hideErrorWindow, closeError, error:{ popUpError } } = this.props;
@@ -80,7 +77,6 @@ class PodcastInput extends Component {
               />
             </div>
           </section>
-
 
           <section className="podcastDetails">
             <div className="podcastSearch">
@@ -115,9 +111,8 @@ class PodcastInput extends Component {
               </select>
             </div>
           </section>
-          {
-            popUpError ? <Error hideErrorWindow={hideErrorWindow}/> : null
-          }
+
+          {popUpError && <Error hideErrorWindow={hideErrorWindow}/>}
 
           <button
             className="formButton"
