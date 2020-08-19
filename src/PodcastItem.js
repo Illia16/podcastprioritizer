@@ -17,7 +17,7 @@ class PodcastItem extends Component {
     };
 
     render() {
-        const { transitTime, title, description, length, image, savePodcast, audio, id } = this.props;
+        const { title, description, image, savePodcast, audio, id, loggedIn } = this.props;
         return (
           <li>
             <div className="podcastContainer">
@@ -42,14 +42,11 @@ class PodcastItem extends Component {
                 </button>
               </div>
             </div>
+            {loggedIn && <button onClick={(e) => { savePodcast(e, title, image, audio, id) }}>Save podcast</button>}
 
-            <Suggestion
-              showHideSuggestion={this.showHideSuggestion}
-              stateSuggestion={this.state}
-              propToprop={this.props}
-            />
-          </li>
-        );
+            <Suggestion showHideSuggestion={this.showHideSuggestion} stateSuggestion={this.state} propToprop={this.props} description={description} />
+            </li>
+        )
     }
 }
 

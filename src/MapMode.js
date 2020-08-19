@@ -26,7 +26,7 @@ const MapMode =(props)=>{
          ) : (
            <li>
              <span className="mode">
-               <i class="fas fa-walking"></i>
+               <i className="fas fa-walking"></i>
              </span>{" "}
              {props.transitTime.pedestrian} minutes
            </li>
@@ -39,14 +39,14 @@ const MapMode =(props)=>{
            <li>
              {" "}
              <span className="mode">
-               <i class="fas fa-biking"></i>
+               <i className="fas fa-biking"></i>
              </span>
              {props.transitTime.bicycle} minute
            </li>
          ) : (
            <li>
              <span className="mode">
-               <i class="fas fa-biking"></i>
+               <i className="fas fa-biking"></i>
              </span>
              {props.transitTime.bicycle} minutes
            </li>
@@ -57,14 +57,14 @@ const MapMode =(props)=>{
        {props.transitTime.fastest <= 1 ? (
          <li>
            <span className="mode">
-             <i class="fas fa-car"></i>
+             <i className="fas fa-car"></i>
            </span>
            {props.transitTime.fastest} minute
          </li>
        ) : (
          <li>
            <span className="mode">
-             <i class="fas fa-car"></i>
+             <i className="fas fa-car"></i>
            </span>
            {props.transitTime.fastest} minutes
          </li>
