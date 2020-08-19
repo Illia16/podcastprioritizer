@@ -18,21 +18,23 @@
         }
 
         .podcastNameDelete {
-            display: flex;
+            position: relative;
             width: 70%;
 
             p {
                 margin: 0;
                 font-size: 1.5rem;
-                padding: 5px 5px 0 10px;
+                padding: 5px 0 0 10px;
+                width: 190px;
             }
 
                 button {
                 background: none;
                 margin: 0;
-                height: 30px;
-                width: 30px;
-                display: inline-block;
+                padding: 5px;
+                position: absolute;
+                top: 0;
+                right: 0;
             }
         }
     }
