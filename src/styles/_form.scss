@@ -9,9 +9,16 @@ padding: 10px;
 border: 2px solid $darkGreen;
 border-radius: 5px;
 
+// form typography
 h2{
-    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+
+    &:last-child{
+    margin-top: 20px;
+    }
 }
+
 p{
     padding: 0;
     margin: 0;

@@ -28,7 +28,7 @@
     background: cyan;
     width: 300px;
     padding: 10px;
-    background-color: #001e31;
+    background-color:rgba(0, 30, 49, 0.8);
     border-radius: 5px;
 
     .podcastUserList {
@@ -40,6 +40,7 @@
     .loginButton {
         width: 100px;
         margin: 10px 0 0 90px;
+
     }
 }
 
@@ -47,6 +48,7 @@
     position: absolute;
     top: 10px;
     right: 0;
+    background-color: $lightBlue;
 }
 
 .podcastItem {
@@ -55,6 +57,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    margin-bottom: 10px;
 
   .podcastNameImage {
     display: flex;
@@ -94,4 +97,20 @@
     height: 25px;
     margin-top: 5px;
   }
+}
+
+.menuButton:hover, .menuButton:focus {
+        background-color: rgba(0, 30, 49, 0.8);
+        color: white;
+        > .fas {
+            color: white;
+        }
+}
+
+.loginButton:hover, .loginButton:focus {
+    background-color: $darkGreen;
+    color: white;
+}
+.fa-bars {
+    font-size:35px;
 }
