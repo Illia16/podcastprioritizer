@@ -1,10 +1,3 @@
-.podcastUserList {
-  display: flex;
-  flex-direction: column;
-}
-
-// podcast save button style
-
 .podcastContainer {
   display: flex;
   flex-direction: column;
@@ -15,6 +8,7 @@
 .podcastPiece {
   height: 75%;
 }
+
 .podcastSave {
   align-self: center;
   height: 25%;
@@ -27,8 +21,43 @@
   }
 }
 
+.podcastMenu {
+    position: absolute;
+    top: 56px;
+    right: 0;
+    background: cyan;
+    width: 300px;
+    padding: 10px;
+    background-color:rgba(0, 30, 49, 0.8);
+    border-radius: 5px;
+
+    .podcastUserList {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .loginButton {
+        width: 100px;
+        margin: 10px 0 0 90px;
+
+    }
+}
+
+.menuButton {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    background-color: $lightBlue;
+}
+
 .podcastItem {
-  width: 300px;
+    background-color: #c2edd8;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 10px;
 
   .podcastNameImage {
     display: flex;
@@ -68,4 +97,20 @@
     height: 25px;
     margin-top: 5px;
   }
+}
+
+.menuButton:hover, .menuButton:focus {
+        background-color: rgba(0, 30, 49, 0.8);
+        color: white;
+        > .fas {
+            color: white;
+        }
+}
+
+.loginButton:hover, .loginButton:focus {
+    background-color: $darkGreen;
+    color: white;
+}
+.fa-bars {
+    font-size:35px;
 }

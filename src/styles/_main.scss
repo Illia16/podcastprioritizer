@@ -2,6 +2,12 @@
 .fas {
   color: $darkGreen;
 }
+
+span{
+  color: $darkGreen;
+  font-weight: 700;
+}
+
 // map and transit styles
 .transitMap {
   padding: 20px;
@@ -30,14 +36,12 @@
 .map{
   
   margin-left:50px;
-  .map{
+  
     position: relative;
     z-index: 2;
     border: solid 2px $black;
     width: 500px;
-    height: 300px;
-  }
-  
+    height: 300px; 
 }
 
 @keyframes transit {
@@ -74,7 +78,6 @@ ul {
   }
 }
 
-
 // input styles
 input,
 button {
@@ -90,7 +93,6 @@ button {
 fieldset {
   border: none;
 }
-
 
 .wrapper ul li {
   position: relative;
@@ -108,7 +110,6 @@ fieldset {
   right: 0;
 }
 
-
 .map{
   width: 250px;
   height: 250px;
@@ -116,11 +117,10 @@ fieldset {
     width: 100%;
   }
 }
+
 .transitMap{
   display: flex;
 }
-
-
 
 // Error Pop Up
 .popup {
