@@ -30,12 +30,14 @@ class App extends Component {
     this.showError = this.showError.bind(this);
   }
 
+  // Set the popupError to false to hide the error component
   hideError() {
     this.setState({
       popUpError: false
     });
   }
 
+  // Set popupError to true to show the error component
   showError() {
     this.setState({
       popUpError: true
@@ -97,9 +99,9 @@ class App extends Component {
 
     // Remove the podcast based on its ID
     dbRef.child(key).remove();
-
   }
 
+  // Set the open and close state for the menu button
   podcastMenu = () => {
     this.setState({
       menuOpen: !this.state.menuOpen
@@ -148,7 +150,6 @@ class App extends Component {
           from: from,
           to: to,
           routeType: mode,
-         
         },
       })
         .then((res) => {
@@ -248,10 +249,12 @@ class App extends Component {
 
       <div className="App">
         <div className="wrapper">
-          <HeaderSection />
+
+        {/* HEADER SECTION COMPONENT */}
+        <HeaderSection />
 
         {/* MENU TO OPEN/CLOSE PODCAST LIST AND LOGIN BUTTON */}
-        <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars"></i></button>
+        <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars" aria-label="Button to open login and user podcast menu"></i></button>
 
         {/* LOGIN AND PODCAST LIST MENU */}
         {this.state.menuOpen ? <PodcastMenu key="podcastMenu" user={this.state.user} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} /> : null}
@@ -282,7 +285,7 @@ class App extends Component {
          {/* CLEAR THE LIST OF PODCAST RESULTS */}
           {
             this.state.podcasts.length !== 0 ? (
-             <button onClick={this.clearResults}>Start over</button>
+            <button onClick={this.clearResults}>Start over</button>
             ) : null
           }
         </div>

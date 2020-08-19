@@ -2,6 +2,7 @@
 .fas {
   color: $darkGreen;
 }
+
 // map and transit styles
 .transitMap {
   padding: 20px;
@@ -26,8 +27,6 @@
 .map {
   width: 300px;
   margin-left: 100px;
- 
-  
 
   img {
     width: 100%;
@@ -42,8 +41,6 @@
     left: 0;
   }
 }
-
-
 
 .mode {
   font-size: 30px;
@@ -69,7 +66,6 @@ ul {
   }
 }
 
-
 // input styles
 input,
 button {
@@ -85,7 +81,6 @@ button {
 fieldset {
   border: none;
 }
-
 
 .wrapper ul li {
   position: relative;
@@ -103,7 +98,6 @@ fieldset {
   right: 0;
 }
 
-
 .map{
   width: 250px;
   height: 250px;
@@ -111,11 +105,10 @@ fieldset {
     width: 100%;
   }
 }
+
 .transitMap{
   display: flex;
 }
-
-
 
 // Error Pop Up
 .popup {

@@ -56,7 +56,7 @@ class PodcastInput extends Component {
         <form>
 
           <section className="travelDetails">
-            <h2><i class="fas fa-map-marker-alt" aria-label="Icon of a location pin"></i> Type in your travel details</h2>
+            <h2><i className="fas fa-map-marker-alt" aria-label="Icon of a location pin"></i> Type in your travel details</h2>
             <div className="startingPoint">
               <label htmlFor="userInputFrom">Starting Point:</label>
               <input
@@ -84,7 +84,7 @@ class PodcastInput extends Component {
 
           <section className="podcastDetails">
             <div className="podcastSearch">
-              <h2><i class="fas fa-podcast" aria-label="Icon of a microphone"></i> Type in your podcast details</h2>
+              <h2><i className="fas fa-podcast" aria-label="Icon of a microphone"></i> Type in your podcast details</h2>
               <label htmlFor="podcastInput">Podcast Search:</label>
               <input
                 onChange={this.handleChangeText}
@@ -104,7 +104,7 @@ class PodcastInput extends Component {
                 name="genreSelect"
                 onChange={this.selectChange}
               >
-                <option value="">Please select an genre</option>
+                <option value="">Please select a genre</option>
                 {this.state.genres.map((genre) => {
                   return (
                     <option value={genre.id} key={genre.id}>
