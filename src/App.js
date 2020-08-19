@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import "./App.scss";
+import MapMode from './MapMode'
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
 import PodcastMenu from './PodcastMenu';
@@ -129,10 +130,11 @@ class App extends Component {
           from: from,
           to: to,
           routeType: mode,
-          manMaps: true,
+         
         },
       })
         .then((res) => {
+          console.log(res);
           const timeCopy = { ...this.state.transitTime }
           timeCopy[mode] = this.timeChange(res.data.route.formattedTime);
           this.setState({
@@ -230,46 +232,10 @@ class App extends Component {
         {this.state.menuOpen ? <PodcastMenu key="podcastMenu" user={this.state.user} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} /> : null}
 
         {/* FORM INPUT */}
-          <PodcastInput inputText={this.podcastCall} locationData={this.locationData} />
-
-          <div className="transitMap">
-            <div className="map">
-              <img src={this.state.mapUrl} />
-            </div>
-
-            <ul
-              className="transit"
-              style={{
-                display: this.state.displayTransit ? "block" : "none",
-              }}
-            >
-              {
-                // walk time
-                this.state.transitTime.pedestrian <= 1 ? (
-                  <li>walk time: {this.state.transitTime.pedestrian} minute</li>
-                ) : (
-                    <li>walk time: {this.state.transitTime.pedestrian} minutes</li>
-                  )
-                // bike time
-              }
-
-              {
-                this.state.transitTime.bicycle <= 1 ? (
-                  <li>bike time: {this.state.transitTime.bicycle} minute</li>
-                ) : (
-                    <li>bike time: {this.state.transitTime.bicycle} minutes</li>
-                  )
-                // car time
-              }
-
-              {this.state.transitTime.fastest <= 1 ? (
-                <li>car time: {this.state.transitTime.fastest} minute</li>
-
-              ) : (
-                  <li>car time: {this.state.transitTime.fastest} minutes</li>
-                )}
-            </ul>
-          </div>
+        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} />
+        
+        {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
+        <MapMode map={this.state.mapUrl} transitTime={this.state.transitTime}/>
 
           {/* LIST OF PODCASTS FROM THE SEARCH */}
           <ul>
