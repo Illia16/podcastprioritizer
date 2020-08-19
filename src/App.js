@@ -139,49 +139,49 @@ class App extends Component {
         this.setState({ mapUrl: res.request.responseURL });
       });
     
-    // For each mode of transportation, find the transit time, convert it to minutes and save it to state
-    this.state.modes.forEach((mode) => {
-      axios({
-        url: `https://www.mapquestapi.com/directions/v2/route`,
-        method: `GET`,
-        responseType: `json`,
-        params: {
-          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
-          from: from,
-          to: to,
-          routeType: mode,
-        },
-      })
-        .then((res) => {
-          if (res.data.route.distance > 100) {
-            this.setState({
-              tooBig: true,
-              popUpError: true,
-            })
-          } else if (res.data.route.distance < 100){
-            this.setState({
-              tooBig: false,
-            })
-          }
-
-          const timeCopy = { ...this.state.transitTime }
-          timeCopy[mode] = this.timeChange(res.data.route.formattedTime);
+    axios({
+      url: `https://www.mapquestapi.com/directions/v2/route`,
+      method: `GET`,
+      responseType: `json`,
+      params: {
+        key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+        from: from,
+        to: to,
+      },
+    })
+      .then((res) => {
+        if (res.data.route.distance > 100) {
           this.setState({
-            transitTime: timeCopy,
-          });
+            tooBig: true,
+            popUpError: true,
+          })
+        } else {
+          // For each mode of transportation, find the transit time, convert it to minutes and save it to state
+          this.state.modes.forEach((mode) => {
+            axios({
+              url: `https://www.mapquestapi.com/directions/v2/route`,
+              method: `GET`,
+              responseType: `json`,
+              params: {
+                key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+                from: from,
+                to: to,
+                routeType: mode,
+              },
+            })
+              .then((res) => {
+                const timeCopy = { ...this.state.transitTime }
+                timeCopy[mode] = this.timeChange(res.data.route.formattedTime);
+                this.setState({
+                  transitTime: timeCopy,
+                });
+              })
+              .catch((er) => {
+                console.log(er);
+              });
         })
-        .catch((er) => {
-          console.log(er);
-        });
-    });
-
-    setTimeout(() => {
-      if (this.state.tooBig) {
-        this.setState({
-          popUpError: true,
-        })
-      }
-    }, 700);
+      }}
+    )
   };
 
   // making an API call for PODCAST
