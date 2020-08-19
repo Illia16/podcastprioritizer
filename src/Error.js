@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.scss';
 
-const Error = ( props ) => {
 
+const Error = (props) => {
     return(
         <div className="popupBack">
             <div className="popup">
-                <p>Error</p>
+                <p>One of the input fields is not valid or distance is too huge</p>
+                <button onClick={props.hideErrorWindow} >CLOSE</button>
             </div>
         </div>
     )

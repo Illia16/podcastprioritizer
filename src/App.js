@@ -6,7 +6,9 @@ import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
 import PodcastMenu from './PodcastMenu';
 import firebase from "./database";
+import Error from "./Error";
 import HeaderSection from "./headerSection";
+
 
 class App extends Component {
   constructor() {
@@ -20,8 +22,24 @@ class App extends Component {
       user: null,
       userId: "anonymous",
       podcastList: [],
+      popUpError: false,
       menuOpen: false
     };
+    
+    this.hideError = this.hideError.bind(this);
+    this.showError = this.showError.bind(this);
+  }
+
+  hideError() {
+    this.setState({
+      popUpError: false
+    });
+  }
+
+  showError() {
+    this.setState({
+      popUpError: true
+    });
   }
 
   // Login method for Google Authentication
@@ -134,7 +152,12 @@ class App extends Component {
         },
       })
         .then((res) => {
-          console.log(res);
+          if (res.data.route.distance > 100) {
+            this.setState({
+              popUpError: true,
+            })
+          }
+
           const timeCopy = { ...this.state.transitTime }
           timeCopy[mode] = this.timeChange(res.data.route.formattedTime);
           this.setState({
@@ -172,9 +195,11 @@ class App extends Component {
     });
   };
 
-  // CLear the list of podcast results from the page
+  // Clear the list of podcast results from the page
   clearResults = () => {
     this.setState({
+      mapUrl: "",
+      transitTime: {},
       podcasts: [],
     });
 
@@ -232,11 +257,16 @@ class App extends Component {
         {this.state.menuOpen ? <PodcastMenu key="podcastMenu" user={this.state.user} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} /> : null}
 
         {/* FORM INPUT */}
-        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} />
+        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} error={this.state} hideErrorWindow={this.hideError} closeError={this.showError}/>
+        
+        {
+          this.state.popUpError ? <Error hideErrorWindow={this.hideError} />  : null
+        }
         
         {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
-        <MapMode map={this.state.mapUrl} transitTime={this.state.transitTime}/>
 
+        <MapMode map={this.state.mapUrl} transitTime={this.state.transitTime}/>
+      
           {/* LIST OF PODCASTS FROM THE SEARCH */}
           <ul>
             {

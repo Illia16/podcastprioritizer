@@ -69,6 +69,24 @@ ul {
   }
 }
 
+
+// input styles
+input,
+button {
+  padding: 2px;
+  
+  &:focus {
+    outline: none;
+    border: 2px solid $darkGreen;
+  }
+}
+
+// form styles
+fieldset {
+  border: none;
+}
+
+
 .wrapper ul li {
   position: relative;
 }
@@ -83,4 +101,54 @@ ul {
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+
+.map{
+  width: 250px;
+  height: 250px;
+  img{
+    width: 100%;
+  }
+}
+.transitMap{
+  display: flex;
+}
+
+
+
+// Error Pop Up
+.popup {
+  position: fixed;
+  background: #001e31;
+  opacity: 1;
+
+  top: 25%;
+  left: calc(100%/4);
+  width: 50vw;
+  height: 300px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.popup p {
+  text-align: center;
+  color: white;
+  margin: auto;
+  font-size: 3rem;
+}
+
+.popup button {
+  padding: 20px;
+}
+
+.popupBack {
+  background-color: rgba(236, 230, 230, 0.75);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
 }
