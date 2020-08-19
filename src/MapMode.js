@@ -71,7 +71,7 @@ const MapMode =(props)=>{
        )}
      </div>
      <div className="map">
-       <img className="map" src={props.map} />
+       <img src={props.map} />
      </div>
    </div>
  );
