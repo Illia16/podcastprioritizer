@@ -70,7 +70,7 @@ class App extends Component {
       })
     })
   }
-
+  
   // Save podcast to user list when button is clicked
   savePodcast = (e, title, image, audio, id) => {
     // Prevent default
@@ -130,7 +130,7 @@ class App extends Component {
           format: `png`,
           start: from,
           end: to,
-          size: `200,200`,
+          size: `300,300`,
           countryCode: `CA`,
           scalebar: true,
           margin: 40,
@@ -174,6 +174,7 @@ class App extends Component {
                 timeCopy[mode] = this.timeChange(res.data.route.formattedTime);
                 this.setState({
                   transitTime: timeCopy,
+                  tooBig: false
                 });
               })
               .catch((er) => {
@@ -287,8 +288,9 @@ class App extends Component {
               {
                 this.state.podcasts.map((podcast) => {
                   const { id, image, title_original, description_original, audio_length_sec, audio} = podcast
+                  const { loggedIn, transitTime} = this.state
                   return (
-                    <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={this.state.transitTime} savePodcast={this.savePodcast} audio={audio} id={id} />
+                    <PodcastItem key={id} image={image} title={title_original} description={description_original} length={audio_length_sec} transitTime={transitTime} savePodcast={this.savePodcast} audio={audio} id={id} loggedIn={loggedIn} />
                   )
                 })
               }

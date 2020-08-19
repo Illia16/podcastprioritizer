@@ -9,73 +9,15 @@ span{
 }
 
 // map and transit styles
-.transitMap {
-  padding: 20px;
-  margin: 50px;
-  
-}
 
-.transit {
-  width: 300px;
-  height: 200px;
-  border-radius: 20px;
-  padding: 10px;
-  color: $lightGreen;
-  background: $black;
-  position: relative;
-  animation-name: transit;
-  animation-duration: 3s;
-  animation-delay: 0.5s;
-  animation-fill-mode: both;
-  li{
-    list-style-type: none;
-  }
-  
-}
 
-.map{
-  
-  margin-left:50px;
-  
-    position: relative;
-    z-index: 2;
-    border: solid 2px $black;
-    width: 500px;
-    height: 300px; 
-}
 
-@keyframes transit {
-  from {
-    left: -500px;
-  }
-  to {
-    left:0px;
-  }
-}
-
-.mode {
-  font-size: 30px;
-  display: inline-block;
-  margin-right: 5px;
-  
-}
 
 ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
   grid-gap: 15px;
   justify-items: center;
-}
-
-// Image button styles
-.podcastButton {
-  background: none;
-  border: 2px solid transparent;
-
-  &:hover,
-  &:focus {
-    border: 2px solid $darkGreen;
-  }
 }
 
 // input styles
@@ -110,19 +52,93 @@ fieldset {
   right: 0;
 }
 
-.map{
-  width: 250px;
-  height: 250px;
-  img{
-    width: 100%;
+/********************************/
+/*  MAP AND TRANSIT SECTION    */
+/*******************************/
+.transitMap {
+  padding: 20px;
+  margin: 50px 0;
+  width: 100%;
+  display: flex;
+  background-color: $black;
+  border-radius: 5px;
+  justify-content: center;
+
+  .map{
+    // margin-left:50px;
+    border: solid 2px $darkGreen;
+    width: 300px;
+    height: 300px; 
+  }
+
+  .transit {
+  width: 300px;
+  height: 200px;
+  border-radius: 20px;
+  padding: 10px;
+  color: $lightGreen;
+  position: relative;
+  animation-name: transit;
+  animation-duration: 3s;
+  animation-delay: 0.5s;
+  animation-fill-mode: both;
+  align-self: center;
+
+    li{
+      list-style-type: none;
+
+      .mode {
+        font-size: 30px;
+        display: inline-block;
+        margin-right: 5px;
+      }
+    }
   }
 }
 
-.transitMap{
-  display: flex;
+@keyframes transit {
+  from {
+    left: -500px;
+  }
+  to {
+    left:0px;
+  }
 }
 
-// Error Pop Up
+/*****************   */
+/* PODCAST LIST    */
+/***************** */
+.podcastContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  height: 400px;
+  border-radius: 5px;
+  background-color: $black;
+  color: white;
+  padding: 10px;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.podcastPiece {
+  width: 218px;
+}
+
+.podcastSave {
+  align-self: center;
+  button {
+    cursor: pointer;
+  }
+  :hover {
+    background: $darkGreen;
+    scale: 1.2;
+  }
+}
+
+/******************/
+/* ERROR POPUP    */
+/******************/
 .popup {
   position: fixed;
   background: #001e31;
