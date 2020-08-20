@@ -9,29 +9,48 @@ class PodcastItem extends Component {
         }
     }
 
-    showHideSuggestion = (e) => {
-        e.preventDefault();
+    showHideSuggestion = () => {
         this.setState({
             displaySuggestion: !this.state.displaySuggestion,
         });
     };
 
     render() {
-        const { title, description, image, savePodcast, audio, id, loggedIn } = this.props;
+
+        const { title, image, savePodcast, audio, id, loggedIn, url,length,transitTime } = this.props;
         return (
-          <li>
-            <div className="podcastContainer">
-              <div className="podcastPiece">
-                    <img src={image} alt={title}></img>
-                    <p>{title}</p>
-              </div>
-              <div className="podcastSave">
-                    {loggedIn && <button onClick={(e) => { savePodcast(e, title, image, audio, id) }}>Save Podcast</button>}
-              </div>
+          <li
+            onMouseEnter={this.showHideSuggestion}
+            onMouseLeave={this.showHideSuggestion}
+            className="podcastContainer"
+          >
+            {/* <div className="podcastContainer"> */}
+            <div className="podcastPiece">
+              <img src={image} alt={title}></img>
             </div>
-        
-            </li>
-        )
+              <a href={url} target="_blank">listen here</a>
+
+            <div>
+              {this.state.displaySuggestion ? (
+                <Suggestion length={length} transitTime={transitTime} />
+              ) : (
+                <p>{title}</p>
+              )}
+            </div>
+
+            <div className="podcastSave">
+              {loggedIn && (
+                <button
+                  onClick={(e) => {
+                    savePodcast(e, title, image, audio, id);
+                  }}
+                >
+                  Save Podcast
+                </button>
+              )}
+            </div>
+          </li>
+        );
     }
 }
 
