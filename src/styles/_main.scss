@@ -23,7 +23,7 @@ ul {
 // input styles
 input,
 button {
-  padding: 2px;
+  padding: 7px;
   
   &:focus {
     outline: none;
@@ -31,6 +31,9 @@ button {
   }
 }
 
+select{
+  padding: 7px;
+}
 // form styles
 fieldset {
   border: none;
@@ -91,15 +94,6 @@ fieldset {
   }
 }
 
-// @keyframes transit {
-//   from {
-//     left: -100%;
-//   }
-//   to {
-//     left:-100px;
-//   }
-// }
-
 /*****************   */
 /* PODCAST LIST    */
 /***************** */
@@ -119,30 +113,58 @@ fieldset {
   }
 }
 
-
-
 .podcastSave {
   align-self: center;
+  &:hover, 
+  &:focus{
+    scale: 1.2;
+  }
+
   button {
     cursor: pointer;
-  }
-  :hover {
-    background: $darkGreen;
-    scale: 1.2;
+      &:hover, 
+      &:focus {
+        background-color: $darkGreen;
+        color: white;      
+      }
   }
 }
 
+  .podcastContainer {
+  a{
+    color: white
+  
+  }
+}
+
+.suggestion p{
+    color: $darkGreen;
+  }
+
+  .podcastContainer a:hover, 
+  .podcastContainer a:focus{
+    color: $darkGreen;
+    cursor: pointer;
+  
+    }
+
+    .podcastContainer a{
+      text-decoration: underline;
+    }
+
+ 
 /******************/
 /* ERROR POPUP    */
 /******************/
 .popup {
+  padding: 10px;
   position: fixed;
   background: #001e31;
   opacity: 1;
+  border-radius: 5px;
 
   top: 25%;
-  left: calc(100%/4);
-  width: 50vw;
+  width: 400px;
   height: 300px;
 
   display: flex;
@@ -158,6 +180,8 @@ fieldset {
 
 .popup button {
   padding: 20px;
+  margin: 0 auto;
+  width: 150px;
 }
 
 .popupBack {
@@ -168,4 +192,19 @@ fieldset {
   bottom: 0;
   left: 0;
   z-index: 10;
+  
+  display:flex;
+  justify-content: center;
+}
+
+// reset button
+.resetButton{
+  margin: 20px auto 0 auto;
+  display: block;
+}
+
+.resetButton:hover,
+.resetButton:focus {
+background-color: $darkGreen;
+color: white;
 }
