@@ -14,7 +14,7 @@ class PodcastInput extends Component {
     };
   }
 
-  // function that listens to OUR TEXT INPUTS AND SETS a value to the appropriate input
+  // Function that listens to OUR TEXT INPUTS AND SETS a value to the appropriate input
   handleChangeText = (e) => {
     e.preventDefault();
     this.setState({
@@ -22,7 +22,7 @@ class PodcastInput extends Component {
     });
   };
 
-  // filling drop-down selection with podcast genres
+  // Filling drop-down selection with podcast genres
   componentDidMount() {
     axios({
       url: `https://listen-api.listennotes.com/api/v2/genres`,
@@ -38,7 +38,7 @@ class PodcastInput extends Component {
     });
   }
 
-  // getting the name of the selected option
+  // Getting the name of the Select Option
   selectChange = (e) => {
     this.setState({
       podcastInput: e.target.options[e.target.selectedIndex].text,
@@ -46,21 +46,25 @@ class PodcastInput extends Component {
     });
   };
 
+  // Check for special characters in inputs
   checkForChar = () => {
     const regex = /^[A-Za-z0-9 ]+$/;
     const isNotValid = regex.test(this.state.userInputFrom);
     return isNotValid;
   };
 
+  // Render method
   render() {
     const {hideErrorWindow, showErrorWindow, error:{ popUpError } } = this.props;
-    console.log(this.checkForChar());
+
     return (
       <div>
         <form>
 
+          {/* To/from destination inputs */}
           <section className="travelDetails">
             <h2><i className="fas fa-map-marker-alt" aria-label="Icon of a location pin"></i> Type in your travel details</h2>
+
             <div className="startingPoint">
               <label htmlFor="userInputFrom">Starting Point:</label>
               <input
@@ -72,6 +76,7 @@ class PodcastInput extends Component {
                 placeholder="12 Bloor Street Toronto"
               />
             </div>
+
             <div className="destination">
               <label htmlFor="userInputTo">Destination:</label>
               <input
@@ -85,9 +90,12 @@ class PodcastInput extends Component {
             </div>
           </section>
 
+          {/* Podcast search */}
           <section className="podcastDetails">
             <div className="podcastSearch">
               <h2><i className="fas fa-podcast" aria-label="Icon of a microphone"></i> Type in your podcast details</h2>
+
+              {/* Podcast text search */}
               <label htmlFor="podcastInput">Podcast Search:</label>
               <input
                 onChange={this.handleChangeText}
@@ -99,6 +107,8 @@ class PodcastInput extends Component {
                 aria-label="example: genre, title, creator"
               ></input>
             </div>
+
+            {/* Podcast genre selection */}
             <div className="podcastDropDown">
               <p>Or pick a genre:</p>
               <select
@@ -118,31 +128,32 @@ class PodcastInput extends Component {
               </select>
             </div>
           </section>
-
+          
+          {/* Popup error window */}
           {popUpError && <Error hideErrorWindow={hideErrorWindow}/>}
-
+          
+          {/* Submit button for searching */}
           <button
             className="formButton"
             onClick={(event) => {
               event.preventDefault();
-              // || this.checkForChar() === true
+        
               if (!this.state.podcastInput || !this.state.userInputFrom || !this.state.userInputTo || this.checkForChar() === false) {
                 showErrorWindow()
               } else {
                 this.props.inputText(event, this.state.podcastInput, this.state.genreSelected);
                 this.props.handleSubmit(event, this.state.userInputFrom, this.state.userInputTo);
-                // this.setState({
-                //   podcastInput: "",
-                //   userInputFrom: "",
-                //   userInputTo: "",
-                //   genreSelected: "",
-                // })
-
+                this.setState({
+                  podcastInput: "",
+                  userInputFrom: "",
+                  userInputTo: "",
+                  genreSelected: "",
+                })
               }
             }
-            }
+          }
           >
-            Find suggestions!
+            FIND SUGGESTIONS
           </button>
         </form>
       </div>

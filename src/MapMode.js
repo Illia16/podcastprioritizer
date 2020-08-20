@@ -18,10 +18,12 @@ const MapMode = (props) => {
           <span className="mode">
             <i aria-label="walking time" className="fas fa-walking"></i>
           </span>
+          
           {props.transitTime.pedestrian <= 1
             ? `${props.transitTime.pedestrian} minute`
             : `${props.transitTime.pedestrian} minutes`}
         </li>
+
         <li>
           <span className="mode">
             <i aria-label="biking time" className="fas fa-biking"></i>
@@ -40,8 +42,9 @@ const MapMode = (props) => {
             : `${props.transitTime.fastest} minutes`}
         </li>
       </div>
+
       <div className="map">
-        <img src={props.map} />
+        <img src={props.map} alt="Map of the route."/>
       </div>
     </div>
   );
