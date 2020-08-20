@@ -1,0 +1,28 @@
+@media (max-width: 500px){
+    div .popup{
+        width: 250px;
+    }
+    div .popup p{
+        font-size: 2rem;
+    }
+
+    div .popup button {
+        padding: 10px;
+    }
+}
+
+
+@media (max-width:400px){
+    .startingPoint input,
+    .destination input,
+    .podcastSearch input,
+    .podcastDropDown select{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .podcastDropDown{
+        flex-direction: column;
+    }
+}

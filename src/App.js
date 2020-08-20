@@ -26,7 +26,7 @@ class App extends Component {
       tooBig: false,
       menuOpen: false
     };
-    
+
     this.hideError = this.hideError.bind(this);
     this.showError = this.showError.bind(this);
   }
@@ -70,14 +70,14 @@ class App extends Component {
       })
     })
   }
-  
+
   // Save podcast to user list when button is clicked
   savePodcast = (e, title, image, audio, id) => {
     // Prevent default
     e.preventDefault();
 
     const dbRef = firebase.database().ref();
-    
+
     // Create a new object with required items
     const podcast = {
       title: title,
@@ -88,7 +88,7 @@ class App extends Component {
     // Go to the user's ID and the podcast ID and set the above object
     dbRef.child(`${this.state.userId}/${id}`).set(podcast)
   }
-  
+
   // Delete podcast item from the user's list
   deletePodcast = (e, key) => {
     // Prevent default
@@ -108,7 +108,7 @@ class App extends Component {
     })
   }
 
-   // function to modify time from 00:00:00 format to minutes
+  // function to modify time from 00:00:00 format to minutes
   timeChange = (time) => {
     const arr = time.split(":");
     const add = parseInt(arr[0] * 60) + parseInt(arr[1]) + parseInt(arr[2] / 60);
@@ -121,24 +121,24 @@ class App extends Component {
     e.preventDefault();
 
     // Axios call to mapquest API to get the map of the route  
-      axios({
-        url: `https://www.mapquestapi.com/staticmap/v5/map`,
-        method: `GET`,
-        responseType: `json`,
-        params: {
-          key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
-          format: `png`,
-          start: from,
-          end: to,
-          size: `300,300`,
-          countryCode: `CA`,
-          scalebar: true,
-          margin: 40,
-        },
-      }).then((res) => {
-        this.setState({ mapUrl: res.request.responseURL });
-      });
-    
+    axios({
+      url: `https://www.mapquestapi.com/staticmap/v5/map`,
+      method: `GET`,
+      responseType: `json`,
+      params: {
+        key: `x3MrPIPmomzlRE4OXlE1fjsepd4chw3q`,
+        format: `png`,
+        start: from,
+        end: to,
+        size: `300,300`,
+        countryCode: `CA`,
+        scalebar: true,
+        margin: 40,
+      },
+    }).then((res) => {
+      this.setState({ mapUrl: res.request.responseURL });
+    });
+
     axios({
       url: `https://www.mapquestapi.com/directions/v2/route`,
       method: `GET`,
@@ -180,9 +180,10 @@ class App extends Component {
               .catch((er) => {
                 console.log(er);
               });
-        })
-      }}
-    )
+          })
+        }
+      }
+      )
   };
 
   // making an API call for PODCAST
@@ -265,56 +266,56 @@ class App extends Component {
       <div className="App">
         <div className="wrapper">
 
-        {/* HEADER SECTION COMPONENT */}
-        <HeaderSection />
+          {/* HEADER SECTION COMPONENT */}
+          <HeaderSection />
 
-        {/* MENU TO OPEN/CLOSE PODCAST LIST AND LOGIN BUTTON */}
-        <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars" aria-label="Button to open login and user podcast menu"></i></button>
+          {/* MENU TO OPEN/CLOSE PODCAST LIST AND LOGIN BUTTON */}
+          <button className="menuButton" onClick={this.podcastMenu}><i className="fas fa-bars" aria-label="Button to open login and user podcast menu"></i></button>
 
-        {/* LOGIN AND PODCAST LIST MENU */}
-        {this.state.menuOpen && <PodcastMenu key="podcastMenu" loggedIn={this.state.loggedIn} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} />}
+          {/* LOGIN AND PODCAST LIST MENU */}
+          {this.state.menuOpen && <PodcastMenu key="podcastMenu" loggedIn={this.state.loggedIn} podcastList={this.state.podcastList} logout={this.logout} login={this.login} deletePodcast={this.deletePodcast} />}
 
-        {/* FORM INPUT */}
-        <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} error={this.state} hideErrorWindow={this.hideError} showErrorWindow={this.showError}/>
-        
-        {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
-        {/* var message = speed >= 120 ? 'Too Fast' : (speed >= 80 ? 'Fast' : 'OK'); */}
-        {
-          this.state.popUpError && this.state.tooBig ? <Error hideErrorWindow={this.hideError} />  : (
-          !this.state.tooBig ? 
-          <div> 
-            <MapMode map={this.state.mapUrl} transitTime={this.state.transitTime}/>                   
-            <ul>
-              {
-                this.state.podcasts.map((podcast) => {
-                  const { id, image, title_original, audio_length_sec, audio,listennotes_url} = podcast
-                  const { loggedIn, transitTime} = this.state
-                  return (
-                    <PodcastItem
-                      key={id}
-                      image={image}
-                      title={title_original}
-                      length={audio_length_sec}
-                      transitTime={transitTime}
-                      savePodcast={this.savePodcast}
-                      audio={audio}
-                      id={id}
-                      loggedIn={loggedIn}
-                      url={listennotes_url}
-                    />
-                  );
-                })
-              }
-            </ul>
-          </div> : null
-          )
-        }
+          {/* FORM INPUT */}
+          <PodcastInput inputText={this.podcastCall} handleSubmit={this.handleSubmit} error={this.state} hideErrorWindow={this.hideError} showErrorWindow={this.showError} />
 
-        {/* CLEAR THE LIST OF PODCAST RESULTS */}
-        {this.state.podcasts.length !== 0 && !this.state.tooBig &&<button onClick={this.clearResults}>Start over</button>}
+          {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
+          {/* var message = speed >= 120 ? 'Too Fast' : (speed >= 80 ? 'Fast' : 'OK'); */}
+          {
+            this.state.popUpError && this.state.tooBig ? <Error hideErrorWindow={this.hideError} /> : (
+              !this.state.tooBig ?
+                <div>
+                  <MapMode map={this.state.mapUrl} transitTime={this.state.transitTime} />
+                  <ul>
+                    {
+                      this.state.podcasts.map((podcast) => {
+                        const { id, image, title_original, audio_length_sec, audio, listennotes_url } = podcast
+                        const { loggedIn, transitTime } = this.state
+                        return (
+                          <PodcastItem
+                            key={id}
+                            image={image}
+                            title={title_original}
+                            length={audio_length_sec}
+                            transitTime={transitTime}
+                            savePodcast={this.savePodcast}
+                            audio={audio}
+                            id={id}
+                            loggedIn={loggedIn}
+                            url={listennotes_url}
+                          />
+                        );
+                      })
+                    }
+                  </ul>
+                </div> : null
+            )
+          }
+
+          {/* CLEAR THE LIST OF PODCAST RESULTS */}
+          {this.state.podcasts.length !== 0 && !this.state.tooBig && <button className="resetButton" onClick={this.clearResults}>Start over</button>}
 
         </div>
-        <footer>Copyright &copy; Podcast Prioritizer | Made at Juno College</footer>
+        <footer>Copyright &copy; Alex Calia, Illia Nikitin, Rachel Jiang, Sierra MacDonald | Made at Juno College</footer>
       </div>
     );
   }
