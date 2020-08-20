@@ -1,4 +1,6 @@
-// header styles
+/******************/
+/* HEADER STYLES */
+/******************/
 .fas {
   color: $darkGreen;
 }
@@ -6,46 +8,6 @@
 span{
   color: $darkGreen;
   font-weight: 700;
-}
-
-// map and transit styles
-
-
-
-
-ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
-  grid-gap: 15px;
-  justify-items: center;
-}
-
-// input styles
-input,
-button {
-  padding: 7px;
-  
-  &:focus {
-    outline: none;
-    border: 2px solid $darkGreen;
-  }
-}
-
-select{
-  padding: 7px;
-}
-// form styles
-fieldset {
-  border: none;
-}
-
-.wrapper ul li {
-  position: relative;
-}
-
-.suggestion {  
-  text-align: center;
- 
 }
 
 /********************************/
@@ -100,21 +62,43 @@ fieldset {
 .podcastContainer {
   display: flex;
   flex-direction: column;
-  border-radius: 5px;
   background-color: $black;
+  border-radius: 5px;
   color: white;
   padding: 10px;
   justify-content: space-between;
   text-align: center;
   transition: all 0.3s;
-  &:hover,
-  &:focus{
-    transform: scale(1.05);
+
+  .podcastButton {
+    margin-bottom: 10px;
+    background-color: $lightGreen;
+    text-align: center;
+    background-color: $black;
+    border: 3px solid $lightGreen;
+    cursor: pointer;
+    color: white;
+
+    &:focus,
+    &:hover {
+      border: 3px solid $darkGreen;
+    }
+
+    p {
+      width: 200px;
+      margin: 10px auto 0 auto;
+      padding: 5px;
+    }
+  }
+
+  a{
+    color: white;
   }
 }
 
 .podcastSave {
   align-self: center;
+
   &:hover, 
   &:focus{
     scale: 1.2;
@@ -122,37 +106,33 @@ fieldset {
 
   button {
     cursor: pointer;
-      &:hover, 
-      &:focus {
-        background-color: $darkGreen;
-        color: white;      
-      }
-  }
-}
 
-  .podcastContainer {
-  a{
-    color: white
-  
+    &:hover, 
+    &:focus {
+      background-color: $darkGreen;
+      color: white;      
+    }
   }
 }
 
 .suggestion p{
     color: $darkGreen;
-  }
+}
 
-  .podcastContainer a:hover, 
-  .podcastContainer a:focus{
-    color: $darkGreen;
-    cursor: pointer;
-  
-    }
+.podcastContainer a:hover, 
+.podcastContainer a:focus{
+  color: $darkGreen;
+  cursor: pointer;
+}
 
-    .podcastContainer a{
-      text-decoration: underline;
-    }
+.podcastContainer a{
+  text-decoration: underline;
+}
 
- 
+.suggestion {  
+  text-align: center;
+}
+
 /******************/
 /* ERROR POPUP    */
 /******************/
@@ -192,12 +172,13 @@ fieldset {
   bottom: 0;
   left: 0;
   z-index: 10;
-  
   display:flex;
   justify-content: center;
 }
 
-// reset button
+/******************/
+/* RESET BUTTON   */
+/******************/
 .resetButton{
   margin: 20px auto 0 auto;
   display: block;
@@ -205,6 +186,6 @@ fieldset {
 
 .resetButton:hover,
 .resetButton:focus {
-background-color: $darkGreen;
-color: white;
+  background-color: $darkGreen;
+  color: white;
 }

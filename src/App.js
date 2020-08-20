@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import axios from "axios";
-import "./App.scss";
 import MapMode from './MapMode'
 import PodcastInput from "./PodcastInput";
 import PodcastItem from "./PodcastItem";
 import PodcastMenu from './PodcastMenu';
 import firebase from "./database";
 import Error from "./Error";
-import HeaderSection from "./headerSection";
-
+import HeaderSection from "./HeaderSection";
 
 class App extends Component {
   constructor() {
@@ -24,17 +22,23 @@ class App extends Component {
       podcastList: [],
       popUpError: false,
       tooBig: false,
-      menuOpen: false
+      menuOpen: false,
+      apiError: false
     };
 
     this.hideError = this.hideError.bind(this);
     this.showError = this.showError.bind(this);
   }
 
+  /*****************/
+  /* Error Popups */
+  /***************/
   // Set the popupError to false to hide the error component
   hideError() {
     this.setState({
       popUpError: false,
+      apiError: false,
+      podcasts: []
     });
   }
 
@@ -45,6 +49,9 @@ class App extends Component {
     });
   }
 
+  /************************/
+  /* User Authentication */
+  /**********************/
   // Login method for Google Authentication
   login = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -68,6 +75,16 @@ class App extends Component {
         podcastList: [],
         loggedIn: false
       })
+    })
+  }
+
+  /*********************************/
+  /* Podcast Menu and Save/Delete */
+  /*******************************/
+  // Set the open and close state for the menu button
+  podcastMenu = () => {
+    this.setState({
+      menuOpen: !this.state.menuOpen
     })
   }
 
@@ -101,21 +118,9 @@ class App extends Component {
     dbRef.child(key).remove();
   }
 
-  // Set the open and close state for the menu button
-  podcastMenu = () => {
-    this.setState({
-      menuOpen: !this.state.menuOpen
-    })
-  }
-
-  // function to modify time from 00:00:00 format to minutes
-  timeChange = (time) => {
-    const arr = time.split(":");
-    const add = parseInt(arr[0] * 60) + parseInt(arr[1]) + parseInt(arr[2] / 60);
-    return add;
-  };
-
-  // making an API call for ROUTE
+  /**************/
+  /* API CALLS */
+  /*************/
   handleSubmit = (e, from, to) => {
     // Prevent default
     e.preventDefault();
@@ -137,6 +142,11 @@ class App extends Component {
       },
     }).then((res) => {
       this.setState({ mapUrl: res.request.responseURL });
+    }).catch(() => {
+      this.setState({
+        popUpError: true,
+        apiError: true
+      })
     });
 
     axios({
@@ -150,6 +160,7 @@ class App extends Component {
       },
     })
       .then((res) => {
+        // If distance is greater than 100 miles, do not continue and show error
         if (res.data.route.distance > 100) {
           this.setState({
             tooBig: true,
@@ -177,13 +188,21 @@ class App extends Component {
                   tooBig: false
                 });
               })
-              .catch((er) => {
-                console.log(er);
+              .catch(() => {
+                this.setState({
+                  popUpError: true,
+                  apiError: true
+                })
               });
           })
         }
       }
-      )
+    ).catch(() => {
+      this.setState({
+        popUpError: true,
+        apiError: true
+      })
+    });
   };
 
   // making an API call for PODCAST
@@ -208,10 +227,24 @@ class App extends Component {
       this.setState({
         podcasts: res.data.results,
       });
+    }).catch(() => {
+      this.setState({
+        popUpError: true,
+        apiError: true
+      })
     });
   };
 
-  // Clear the list of podcast results from the page
+  // function to modify time from 00:00:00 format to minutes
+  timeChange = (time) => {
+    const arr = time.split(":");
+    const add = parseInt(arr[0] * 60) + parseInt(arr[1]) + parseInt(arr[2] / 60);
+    return add;
+  };
+
+  /*****************/
+  /* Clear Results*/
+  /***************/
   clearResults = () => {
     this.setState({
       mapUrl: "",
@@ -222,7 +255,9 @@ class App extends Component {
     window.scrollTo(0, 0);
   };
 
-  // componentDidMount method
+  /****************************/
+  /* componentDidMount Method */
+  /****************************/
   componentDidMount() {
     const auth = firebase.auth();
 
@@ -259,7 +294,9 @@ class App extends Component {
     })
   }
 
-  // render method
+  /******************/
+  /* Render Method */
+  /****************/
   render() {
     return (
 
@@ -281,6 +318,7 @@ class App extends Component {
           {/* SHOW MAP AND TRANSIT TIMES FOR EACH MODE OF TRANSPORTATION */}
           {/* var message = speed >= 120 ? 'Too Fast' : (speed >= 80 ? 'Fast' : 'OK'); */}
           {
+            this.state.apiError ? <Error hideErrorWindow={this.hideError} apiError={this.state.apiError} /> :
             this.state.popUpError && this.state.tooBig ? <Error hideErrorWindow={this.hideError} /> : (
               !this.state.tooBig ?
                 <div>
@@ -322,28 +360,3 @@ class App extends Component {
 }
 
 export default App;
-
-//Landing header with a Get Started button, or arrow, moves to user input
-
-// User inputs for To and From
-
-// Error handling for empty inputs, regex to prevent special characters from being typed, error when address can't be found
-
-// Users submit map requests
-
-// Get travel time and distance.  Convert time to minutes and store in state
-
-// Genre dropdown or user search for podcast, user submits
-
-// take genre/search value, add time state to API query, returns 10 results
-
-// map results to page, clicking on a podcast will show whether they should walk or bike, under the grid of the results
-
-/* Components:
-App
-Location Input: onChange: handleLocation
-Podcast Input: onChange:handlepodcast
-Podcast Grid
-Travel Mode Result
-Reset Button
-*/
